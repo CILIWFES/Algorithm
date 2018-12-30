@@ -4,7 +4,7 @@
 
 #ifndef ALGORITHM_TIMEP_H
 #define ALGORITHM_TIMEP_H
-#include "time/TimePoint.h"
+#include "module/class/TimePoint.h"
 //定义全局变量
 TimePoint timePoint;
 #endif //ALGORITHM_TIMEP_H
