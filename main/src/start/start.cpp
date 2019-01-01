@@ -1,8 +1,13 @@
 #include <iostream>
+#include <ctime>
 #include "module/performance/timeP.h"
+#include <random>
+#include <ctime>
 int main() {
     timePoint.setPoint();
-    std::cout << "Hello, World!" << std::endl;
+    int range=1000;
+
+
     timePoint.showPoint();
     return 0;
 }
