@@ -5,10 +5,11 @@
 #ifndef ALGORITHM_NEURONS_H
 #define ALGORITHM_NEURONS_H
 
-#include "algorithm/neuralNetworks/class/neurons.h"
+#include "algorithm/neuralNetworks/class/Neurons.h"
 #include <vector>
 #include <ctime>
 
+Neurons::Neurons(){}
 
 //声明静态变量
 std::default_random_engine Neurons::myRand(time(nullptr));    // 将种子值设置为时间
@@ -20,17 +21,19 @@ double   Neurons::e = 2.71828182846;
  * @param weights
  * @param range
  */
-Neurons::Neurons(unsigned long long int weights, int range) : weights(*new vector<double>(weights)) {
+Neurons::Neurons(unsigned long long int weights, int range) : weights( vector<double>(weights)) {
 
     long long rand1 = 0;
     long long rand2 = 0;
     for (double &weight : this->weights) {
-        rand1 = this->myRand();
-        rand2 = this->myRand();
+        rand1 = myRand();
+        rand2 = myRand();
         weight = (rand1 % (2 * range) - range) + rand2 * 1.0 / maxRand / range;
     }
+
     this->bias = (rand1 % (2 * range) - range) + rand2 * 1.0 / maxRand / range;
 }
+
 
 /**
  * 计算单元
@@ -64,7 +67,7 @@ double Neurons::conversion(double val) {
  */
 vector<double> &Neurons::correct(double lastVal, vector<double> &slope, double rate) {
     //复制原始数组
-    vector<double> &saveW = *new vector<double>(this->weights);
+    vector<double> &saveW =* new vector<double>(this->weights);
     for (unsigned long long i = 0; i < slope.size(); ++i) {
         double changeVal = rate * slope.at(i);
         this->weights.at(i) -= changeVal * lastVal;
@@ -75,7 +78,6 @@ vector<double> &Neurons::correct(double lastVal, vector<double> &slope, double r
 
 
 Neurons::~Neurons() {
-    delete &this->weights;
 }
 
 #endif //ALGORITHM_NEURONS_H

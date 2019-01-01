@@ -1,13 +1,6 @@
 #include <iostream>
-#include <ctime>
-#include "module/performance/timeP.h"
-#include <random>
-#include <ctime>
+#include "algorithm/neuralNetworks/class/connectedMod.h"
 int main() {
-    timePoint.setPoint();
-    int range=1000;
-
-
-    timePoint.showPoint();
+    FullyConnected* fullyConnected=new FullyConnected(6,1,3,{4,3},1);
     return 0;
 }
