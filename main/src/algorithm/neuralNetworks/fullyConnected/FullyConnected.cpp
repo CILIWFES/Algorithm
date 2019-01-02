@@ -33,7 +33,20 @@ hidden(*new vector<vector<Neurons>>(hidden_W.size())),outPut(*new vector<Neurons
 
 }
 void FullyConnected::prediction(vector<double>& set){
-    return;
+    for(int layer=0;layer<this->hidden.size();layer++){
+
+    }
+}
+vector<double>& FullyConnected::calculateLayer(vector<Neurons>&vec,vector<double>& input){
+    vector<double>& rets=*new vector<double>(vec.size());
+
+    for(unsigned long long i=0;i<vec.size();i++){
+        Neurons item = vec.at(i);
+        double val=item.calculate(input);
+        rets.at(i)=val;
+    }
+
+    return rets;
 }
 vector<vector<double>> FullyConnected::predictionByTrain(TrainingSet& set){
     return vector<vector<double>>();

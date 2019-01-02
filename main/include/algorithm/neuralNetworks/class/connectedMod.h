@@ -10,6 +10,9 @@ public:
     vector<vector<double>> predictionByTrain(TrainingSet& set);
 
     ~FullyConnected();
+
+protected:
+    vector<double>& calculateLayer(vector<Neurons>&vec,vector<double>& input);
 private:
     int inputCnts;
     int hiddenCnts;
