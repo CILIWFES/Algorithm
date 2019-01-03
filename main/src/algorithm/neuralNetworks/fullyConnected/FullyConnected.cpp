@@ -54,10 +54,11 @@ double FullyConnected::trainNetWork(vector<vector<double>> &historicalOutput, Tr
     //set.trainAnswer.size()必须与误差相等
     for (unsigned long long i = 0; i < set.trainAnswer.size(); i++) {
         double prediction = set.prediction.at(i);
-        double reduce = set.trainAnswer.at(i) - prediction;
+        //负的输出-标出
+        double reduce = -(prediction-set.trainAnswer.at(i));
         ret += reduce * reduce;
         //输出层误差斜率
-        slop.at(i) = -(reduce) * prediction * (1 - prediction);
+        slop.at(i) = (reduce) * prediction * (1 - prediction);
     }
     ret /= set.trainAnswer.size();
     //传入输出层

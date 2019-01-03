@@ -2,19 +2,26 @@
 // Created by ZC on 2019/1/1.
 //
 
-#ifndef ALGORITHM_TRAININGSET_H
-#define ALGORITHM_TRAININGSET_H
+#pragma once
 
 #include <vector>
-using std::vector;
-class TrainingSet{
+#include <memory>
+
+
+using std::vector,std::shared_ptr;
+
+class TrainingSet {
 public:
-    TrainingSet(vector<double>& trainDatas,vector<double>& trainAnswer);
-    vector<double>& trainDatas;
-    vector<double>& trainAnswer;
-    vector<double>& prediction;
+    /**
+     * 传入训练数据与训练答案
+     * @param trainDatas  训练数据
+     * @param trainAnswer 训练答案
+     */
+    TrainingSet(shared_ptr<vector<double>>&trainDatas, shared_ptr<vector<double>>&trainAnswer);
+
+    shared_ptr<vector<double>> trainDatas;
+    shared_ptr<vector<double>> trainAnswer;
+    shared_ptr<vector<double>> prediction;
+
     ~TrainingSet();
-
 };
-
-#endif //ALGORITHM_TRAININGSET_H
