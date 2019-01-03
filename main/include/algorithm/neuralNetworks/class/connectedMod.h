@@ -6,13 +6,19 @@
 class FullyConnected {
 public:
     FullyConnected(int inputCnts,int hiddenCnts,int outputCnts,vector<unsigned long long int> hidden_W,int randRange);
-    void prediction(vector<double>& set);
-    vector<vector<double>> predictionByTrain(TrainingSet& set);
 
     ~FullyConnected();
+    vector<double> prediction(vector<double>& set);
+
+    double trainNetWork(vector<vector<double>>& vec,TrainingSet& set,double rate);
+    vector<vector<double>>* predictionByTrain(TrainingSet& set);
+
 
 protected:
-    vector<double>& calculateLayer(vector<Neurons>&vec,vector<double>& input);
+    vector<double> collectW(vector<double>& slop,vector<vector<double>>& w,vector<double>&lastVal);
+    vector<vector<double>>* tarinLayer(vector<Neurons>&vec,vector<double>& slop,vector<double>& lastval,double rate);
+    vector<double> calculateLayer(vector<Neurons>&vec,vector<double>& input);
+
 private:
     int inputCnts;
     int hiddenCnts;
@@ -21,3 +27,6 @@ private:
     vector<Neurons>& outPut;
 
 };
+namespace fullyConnected {
+    int start(int times);
+}

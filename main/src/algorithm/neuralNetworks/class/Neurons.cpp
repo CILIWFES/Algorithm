@@ -65,14 +65,16 @@ double Neurons::conversion(double val) {
  * @param rate    学习率
  * @return
  */
-vector<double> &Neurons::correct(double lastVal, vector<double> &slope, double rate) {
+vector<double> Neurons::correct(double lastVal, double slope, double rate) {
     //复制原始数组
-    vector<double> &saveW =* new vector<double>(this->weights);
-    for (unsigned long long i = 0; i < slope.size(); ++i) {
-        double changeVal = rate * slope.at(i);
+    vector<double> saveW =vector<double>(this->weights);
+    //改变变量
+    for (unsigned long long i = 0; i < weights.size(); ++i) {
+        double changeVal = rate * slope;
         this->weights.at(i) -= changeVal * lastVal;
         this->bias -= changeVal;
     }
+
     return saveW;
 }
 

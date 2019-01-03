@@ -10,8 +10,7 @@ public:
     Neurons(unsigned long long int weights, int range);
     double calculate(vector<double>& vals);
     double conversion(double val);
-    vector<double>& correct(double lastVal, vector<double>& slope,double rate);
-    unsigned long long getsss();
+    vector<double> correct(double lastVal, double slope,double rate);
     ~Neurons();
 private:
     static std::default_random_engine myRand;    // 将种子值设置为时间

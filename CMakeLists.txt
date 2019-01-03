@@ -10,4 +10,4 @@ add_executable(Algorithm
         main/src/algorithm/neuralNetworks/class/Neurons.cpp
         main/src/algorithm/neuralNetworks/fullyConnected/FullyConnected.cpp
         main/src/algorithm/neuralNetworks/class/TrainingSet.cpp
-        )
+        main/src/algorithm/neuralNetworks/fullyConnected/fullyConnectedStart.cpp)
