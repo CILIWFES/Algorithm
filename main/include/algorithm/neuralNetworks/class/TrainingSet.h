@@ -17,7 +17,7 @@ public:
      * @param trainDatas  训练数据
      * @param trainAnswer 训练答案
      */
-    TrainingSet(shared_ptr<vector<double>>&trainDatas, shared_ptr<vector<double>>&trainAnswer);
+    TrainingSet(shared_ptr<vector<double>>trainDatas, shared_ptr<vector<double>>trainAnswer);
 
     shared_ptr<vector<double>> trainDatas;
     shared_ptr<vector<double>> trainAnswer;

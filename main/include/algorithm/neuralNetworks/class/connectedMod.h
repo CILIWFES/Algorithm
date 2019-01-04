@@ -5,14 +5,14 @@
 
 class FullyConnected {
 public:
-    FullyConnected(int inp_hid_out[3], int hidW_Cnt[], int randRange);
+    FullyConnected(unsigned inp_hid_out[], unsigned hid_Cnt[], int randRange);
 
     /**
      * 神经网络预测,并返回预测向量
      * @param dataSet 输入向量
      * @return  输出向量
      */
-    shared_ptr<vector<double>> prediction(shared_ptr<vector<double>> &dataSet);
+    shared_ptr<vector<double>> prediction(vector<double> &dataSet);
 
     /**
      * 开始训练
@@ -22,7 +22,7 @@ public:
      * @param modelCheck 模型选择
      * @return 最后一次的误差
      */
-    double startTrain(shared_ptr<vector<vector<TrainingSet>>> &trainSets, int times, int rate, int modelCheck);
+    double startTrain(vector<TrainingSet> &trainSets, int times, double rate, int modelCheck);
 
     ~FullyConnected();
 
@@ -30,11 +30,11 @@ protected:
     /**
     * 通过隐藏层输出,进行训练
     * @param hiddenOutPut 隐藏层输出
-    * @param tarinSet     训练集合(输入向量,真实向量,模型预计)
+    * @param trainingSet     训练集合(输入向量,真实向量,模型预计)
     * @param rate         学习因子
     * @return 误差率
     */
-    double trainByPrediction(shared_ptr<vector<vector<double>>> &hiddenOutPut, TrainingSet &tarinSet, double rate);
+    double trainByPrediction(vector<vector<double>> &hiddenOutPut, TrainingSet &trainingSet, double rate);
 
     /**
      * 预测训练向量并返回隐藏层挤压后的输出参数
@@ -49,7 +49,7 @@ protected:
      * @param lastOutput  当前神经元挤压输出
      * @return 下一个斜率
      */
-    shared_ptr<vector<double>> tarinLayer(shared_ptr<vector<double>> &slop, shared_ptr<vector<double>> &lastOutput);
+    shared_ptr<vector<vector<double>>>tarinLayer(vector<Neurons> &neurons,vector<double> &slop, vector<double>&lastIntput ,double rate);
 
 
     /**
@@ -58,11 +58,18 @@ protected:
      * @param inputDatas  输入向量
      * @return 当前神经元挤压输出
      */
-    shared_ptr<vector<double>>
-    predictionLayer(shared_ptr<vector<Neurons>> &neurons, shared_ptr<vector<vector<double>>> &inputDatas);
+    shared_ptr<vector<double>> predictionLayer(vector<Neurons> &neurons, vector<double> &inputDatas);
 
 private:
 
+    /**
+     * 计算当前层的权值
+     * @param slop  上一层斜率
+     * @param oldW  上一层旧权值
+     * @param lastOutput 当前神经元的输出
+     * @return
+     */
+    vector<double>& calculationWeight(vector<double> &slop, vector<vector<double>> &oldW, vector<double> &lastOutput);
     /**
      * 二维隐藏层指针
      */
@@ -75,5 +82,5 @@ private:
 };
 
 namespace fullyConnected {
-    int start(int times);
+    double start(int times,double rate);
 }

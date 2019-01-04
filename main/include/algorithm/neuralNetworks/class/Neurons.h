@@ -4,25 +4,32 @@
 #include <ctime>
 #include <random>
 #include <memory>
+#include "TrainingSet.h"
 #define e 2.71828182846
 
 using std::vector, std::shared_ptr;
 
 class Neurons {
 public:
+    Neurons();
+    /**
+    * 拷贝构造
+    * @param other
+    */
+    Neurons(const Neurons& other);
     /**
      * 生成神经网络
-     * @param weights  权重参数数量
+     * @param weightCnts  权重参数数量
      * @param range    生成随机数范围
      */
-    Neurons(unsigned weights, int range);
+    Neurons(unsigned weightCnts, int range);
 
     /**
     * 正向传播,传递该神经元计算值
     * @param vals 上一层参数
     * @return 计算完成的值
     */
-    double calculate(shared_ptr<vector<double>> vals);
+    double calculate(vector<double>& vals);
     /**
      * 挤压函数
      * @param val 当前层计算值
@@ -36,14 +43,15 @@ public:
      * @param rate    学习因子
      * @return
      */
-    shared_ptr<vector<double>> correct(double lastInput, double slope, double rate);
-
+    vector<double> correct(vector<double>&  lastInput, double slope, double rate);
+    Neurons& operator=(const Neurons& other);
     ~Neurons();
+    shared_ptr<vector<double>> weights;
 
 private:
     //随机引擎
     static std::default_random_engine myRand;
     double bias;
-    shared_ptr<vector<double>> weights;
+    shared_ptr<TrainingSet> b;
 };
 
