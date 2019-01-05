@@ -7,7 +7,6 @@
 #include "algorithm/neuralNetworks/class/TrainingSet.h"
 
 
-
 FullyConnected::FullyConnected(unsigned inp_hid_out[], unsigned hid_Cnt[], int randRange){
     //记录数据
     unsigned inputCnts=inp_hid_out[0];
@@ -57,7 +56,7 @@ double FullyConnected::trainByPrediction(vector<vector<double>> &hiddenOutPut, T
     }
     ret /= trainingSet.trainAnswer->size();
     //传入输出层
-    shared_ptr<vector<vector<double>>> oldW (this->tarinLayer(*this->outPut, *slop,*trainingSet.prediction, rate));
+    shared_ptr<vector<vector<double>>> oldW (this->tarinLayer(*this->outPut, *slop,hiddenOutPut.at(hiddenOutPut.size()-1), rate));
     //重置slop
     slop.reset(&this->calculationWeight(*slop, *oldW,hiddenOutPut.at(hiddenOutPut.size()-1)));
 
@@ -139,7 +138,7 @@ shared_ptr<vector<vector<double>>> FullyConnected::predictionByTrain(TrainingSet
 
 shared_ptr<vector<vector<double>>> FullyConnected::tarinLayer(vector<Neurons> &neurons,vector<double> &slop, vector<double>&lastIntput,double rate){
     //记录神经元的旧权重
-    shared_ptr<vector<vector<double>>> ret(new vector<vector<double>>(lastIntput.size()));
+    shared_ptr<vector<vector<double>>> ret(new vector<vector<double>>(neurons.size()));
 
     for (unsigned i = 0; i < slop.size(); i++) {
         auto& item = neurons.at(i);
@@ -151,17 +150,21 @@ shared_ptr<vector<vector<double>>> FullyConnected::tarinLayer(vector<Neurons> &n
 double FullyConnected::startTrain(vector<TrainingSet> &trainSets, int times, double rate, int modelCheck=0){
     unsigned nowTime=0;
     double  error=0;
+    int  showTime=times/20;
     do {
+        error=0l;
         for(unsigned i=0;i<trainSets.size();i++){
-            auto trainSet = trainSets.at(i);
-            auto hiddOutput=this->predictionByTrain(trainSets.at(i));
-            error=this->trainByPrediction(*hiddOutput,trainSet,rate);
+            auto& trainSet = trainSets.at(i);
+            auto hiddOutput=this->predictionByTrain(trainSet);
+            error+=this->trainByPrediction(*hiddOutput,trainSet,rate);
         }
         nowTime++;
+        if ((nowTime - 1) % showTime == 0) {
+            cout<<"No:\t"<<nowTime<<"\ttraining,AverageError is :\t"<<error/trainSets.size()<<endl;
+        }
     } while (times >nowTime);
     return error;
 }
 FullyConnected::~FullyConnected() {
-    delete &hidden;
-    delete &outPut;
+
 }

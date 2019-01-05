@@ -2,6 +2,8 @@
 
 #include "algorithm/neuralNetworks/class/Neurons.h"
 #include "algorithm/neuralNetworks/class/TrainingSet.h"
+#include<iostream>
+using  std::cout,std::endl;
 
 class FullyConnected {
 public:
@@ -82,5 +84,5 @@ private:
 };
 
 namespace fullyConnected {
-    double start(int times,double rate);
+    shared_ptr<FullyConnected> makeFullyConnected(int times,double rate);
 }

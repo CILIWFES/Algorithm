@@ -60,7 +60,7 @@ vector<double> Neurons::correct(vector<double>& lastInput, double slope, double 
     //复制原始数组
     vector<double> saveW(vector<double>(*this->weights));
     //根据△w+=slope*lastVal
-    for (unsigned long long i = 0; i < weights->size(); ++i) {
+    for (unsigned i = 0; i < weights->size(); ++i) {
         double changeVal = rate * slope;
         this->weights->at(i) += changeVal * lastInput.at(i);
         this->bias += changeVal;
