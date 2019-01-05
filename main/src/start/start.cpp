@@ -1,13 +1,13 @@
 #include <iostream>
 #include <string>
 #include<memory>
-#include "algorithm/neuralNetworks/class/connectedMod.h"
+#include "algorithm/neuralNetworks/connectedModule.h"
 
 
 int main() {
 
-    auto fullyConnected=fullyConnected::makeFullyConnected(10000, 0.1);
-    auto* temp=new vector<double>({1,0});
+    auto fullyConnected=fullyConnected::makeFullyConnected(1000, 0.1);
+    auto* temp=new vector<double>({8,7});
     auto ret=fullyConnected->prediction(*temp);
     cout<<"prediction \t";
     for(unsigned i=0;i<ret->size();i++){

@@ -2,8 +2,7 @@
 
 #include "algorithm/neuralNetworks/class/Neurons.h"
 #include "algorithm/neuralNetworks/class/TrainingSet.h"
-#include<iostream>
-using  std::cout,std::endl;
+
 
 class FullyConnected {
 public:
@@ -82,7 +81,3 @@ private:
     shared_ptr<vector<Neurons>> outPut;
 
 };
-
-namespace fullyConnected {
-    shared_ptr<FullyConnected> makeFullyConnected(int times,double rate);
-}

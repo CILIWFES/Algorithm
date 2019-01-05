@@ -2,10 +2,22 @@
 // Created by ZC on 2019/1/1.
 //
 
-#include"algorithm/neuralNetworks/class/connectedMod.h"
+#include"algorithm/neuralNetworks/connectedModule.h"
 #include "algorithm/neuralNetworks/class/Neurons.h"
 #include "algorithm/neuralNetworks/class/TrainingSet.h"
 
+struct {
+    //增长倍率
+    int growthRate=10;
+    //结束倍率
+    int endRate=10000;
+    //初始值
+    double initialValue=0;
+    //增长因子
+    double growthFactor=2;
+    //展示次数
+    int showTime=20;
+}info;
 
 FullyConnected::FullyConnected(unsigned inp_hid_out[], unsigned hid_Cnt[], int randRange){
     //记录数据
@@ -148,11 +160,12 @@ shared_ptr<vector<vector<double>>> FullyConnected::tarinLayer(vector<Neurons> &n
     return ret;
 }
 double FullyConnected::startTrain(vector<TrainingSet> &trainSets, int times, double rate, int modelCheck=0){
+    double startRate=rate;
     unsigned nowTime=0;
     double  error=0;
-    int  showTime=times/20;
+    int  showTime=times/info.showTime;
     do {
-        error=0l;
+        error=0;
         for(unsigned i=0;i<trainSets.size();i++){
             auto& trainSet = trainSets.at(i);
             auto hiddOutput=this->predictionByTrain(trainSet);
@@ -160,9 +173,20 @@ double FullyConnected::startTrain(vector<TrainingSet> &trainSets, int times, dou
         }
         nowTime++;
         if ((nowTime - 1) % showTime == 0) {
-            cout<<"No:\t"<<nowTime<<"\ttraining,AverageError is :\t"<<error/trainSets.size()<<endl;
+            error/=trainSets.size();
+            if(nowTime==1){
+                info.initialValue = error;
+            }
+            if(error!=0){
+                //当前倍率
+                int magnification=info.initialValue/error/info.growthRate;
+                if(magnification>=1 && magnification<info.endRate){
+                    rate=magnification*info.growthFactor*startRate;
+                }
+            }
+            cout<<"No:\t"<<nowTime<<"\ttraining,AverageError is :\t"<<error<<endl;
         }
-    } while (times >nowTime);
+    } while (error>0.001);
     return error;
 }
 FullyConnected::~FullyConnected() {
