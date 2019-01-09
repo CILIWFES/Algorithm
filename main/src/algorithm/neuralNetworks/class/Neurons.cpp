@@ -52,9 +52,10 @@ double Neurons::calculate(vector<double>& vals) {
 
 double Neurons::conversion(double val) {
     return 1.0 / (1 + pow(e, -val));
-
 }
-
+double Neurons::conversionDerivative(double val) {
+    return val*(1-val);
+}
 
 vector<double> Neurons::correct(vector<double>& lastInput, double slope, double rate) {
     //复制原始数组

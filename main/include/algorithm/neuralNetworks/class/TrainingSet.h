@@ -8,19 +8,29 @@
 #include <memory>
 
 
-using std::vector,std::shared_ptr;
+using std::vector, std::shared_ptr, std::move, std::make_shared;
 
 class TrainingSet {
 public:
+    TrainingSet();
     /**
      * 传入训练数据与训练答案
      * @param trainDatas  训练数据
-     * @param trainAnswer 训练答案
+     * @param trainAnswers 训练答案
      */
-    TrainingSet(shared_ptr<vector<double>>trainDatas, shared_ptr<vector<double>>trainAnswer);
+    TrainingSet(vector<double> *trainDatas, vector<double> *trainAnswers);
+
+    TrainingSet &operator=(TrainingSet &&trainingSet);
+    TrainingSet &operator=(TrainingSet &trainingSet);
+
+    TrainingSet(TrainingSet &&trainingSet);
+
+
 
     shared_ptr<vector<double>> trainDatas;
-    shared_ptr<vector<double>> trainAnswer;
+
+    shared_ptr<vector<double>> trainAnswers;
+
     shared_ptr<vector<double>> prediction;
 
     ~TrainingSet();

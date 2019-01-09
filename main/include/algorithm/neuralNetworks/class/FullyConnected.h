@@ -6,6 +6,7 @@
 
 class FullyConnected {
 public:
+
     FullyConnected(unsigned inp_hid_out[], unsigned hid_Cnt[], int randRange);
 
     /**
@@ -35,7 +36,7 @@ protected:
     * @param rate         学习因子
     * @return 误差率
     */
-    double trainByPrediction(vector<vector<double>> &hiddenOutPut, TrainingSet &trainingSet, double rate);
+    double trainByPrediction(vector<vector<double>>& hiddenOutPut, TrainingSet &trainingSet, double rate);
 
     /**
      * 预测训练向量并返回隐藏层挤压后的输出参数
@@ -65,16 +66,19 @@ private:
 
     /**
      * 计算当前层的权值
-     * @param slop  上一层斜率
-     * @param oldW  上一层旧权值
+     * @param beforNeurons  上一层神经元
+     * @param slop  当前斜率
+     * @param oldW  当前旧权值
      * @param lastOutput 当前神经元的输出
      * @return
      */
-    vector<double>& calculationWeight(vector<double> &slop, vector<vector<double>> &oldW, vector<double> &lastOutput);
+    vector<double>& calculationWeight(vector<Neurons>& beforNeurons,vector<double> &slop, vector<vector<double>> &oldW, vector<double> &lastOutput);
+
     /**
      * 二维隐藏层指针
      */
     shared_ptr<vector<vector<Neurons>>> hidden;
+
     /**
      * 一维输出层指针
      */

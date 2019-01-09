@@ -2,7 +2,7 @@
 // Created by ZC on 2019/1/1.
 //
 
-#include"algorithm/neuralNetworks/connectedModule.h"
+#include"algorithm/neuralNetworks/ConnectedModule.h"
 #include "algorithm/neuralNetworks/class/Neurons.h"
 #include "algorithm/neuralNetworks/class/TrainingSet.h"
 
@@ -56,28 +56,29 @@ FullyConnected::FullyConnected(unsigned inp_hid_out[], unsigned hid_Cnt[], int r
 double FullyConnected::trainByPrediction(vector<vector<double>> &hiddenOutPut, TrainingSet &trainingSet, double rate){
     double ret = 0;
     //先计算起始斜率
-    shared_ptr<vector<double>> slop( new vector<double>(trainingSet.trainAnswer->size()));
-    //set.trainAnswer.size()必须与误差相等
-    for (unsigned  i = 0; i < trainingSet.trainAnswer->size(); i++) {
+    shared_ptr<vector<double>> slop( new vector<double>(trainingSet.trainAnswers->size()));
+    //set.trainAnswers.size()必须与误差尺寸相等
+    //计算初始斜率
+    for (unsigned  i = 0; i < trainingSet.trainAnswers->size(); i++) {
         double prediction = trainingSet.prediction->at(i);
         //负的输出-标出
-        double reduce = -(prediction-trainingSet.trainAnswer->at(i));
+        double reduce = -(prediction-trainingSet.trainAnswers->at(i));
         ret += reduce * reduce*0.5;
         //输出层误差斜率
         slop->at(i) = (reduce) * prediction * (1 - prediction);
     }
-    ret /= trainingSet.trainAnswer->size();
+    ret /= trainingSet.trainAnswers->size();
     //传入输出层
     shared_ptr<vector<vector<double>>> oldW (this->tarinLayer(*this->outPut, *slop,hiddenOutPut.at(hiddenOutPut.size()-1), rate));
     //重置slop
-    slop.reset(&this->calculationWeight(*slop, *oldW,hiddenOutPut.at(hiddenOutPut.size()-1)));
+    slop.reset(&this->calculationWeight(this->hidden->at(this->hidden->size()-1),*slop, *oldW,hiddenOutPut.at(hiddenOutPut.size()-1)));
 
     for (unsigned  i = hiddenOutPut.size() - 1; i >= 1; i--) {
         //历史权重
         //上一层输出
         auto &historicalTemp=hiddenOutPut.at(i - 1);
         oldW = this->tarinLayer(this->hidden->at(i), *slop, historicalTemp, rate);
-        slop.reset(&this->calculationWeight(*slop, *oldW, historicalTemp));
+        slop.reset(&this->calculationWeight(this->hidden->at(i-1),*slop, *oldW, historicalTemp));
     }
 
     this->tarinLayer(this->hidden->at(0), *slop, *trainingSet.trainDatas, rate);
@@ -86,7 +87,7 @@ double FullyConnected::trainByPrediction(vector<vector<double>> &hiddenOutPut, T
 }
 
 
-vector<double>& FullyConnected::calculationWeight(vector<double> &slop, vector<vector<double>> &oldW, vector<double> &lastOutput) {
+vector<double>& FullyConnected::calculationWeight(vector<Neurons> &beforNeurons,vector<double> &slop, vector<vector<double>> &oldW, vector<double> &lastOutput) {
     //构建上一神经元斜率
     vector<double>& temp =*new vector<double>(lastOutput.size());
     //以当前斜率与旧权重,构建上个全重
@@ -97,9 +98,8 @@ vector<double>& FullyConnected::calculationWeight(vector<double> &slop, vector<v
             temp.at(j) += item * tempW.at(j);
         }
     }
-    //signmod
     for (unsigned i = 0; i < temp.size(); i++) {
-        temp.at(i) *= lastOutput.at(i) * (1 - lastOutput.at(i));
+        temp.at(i) *=beforNeurons.at(i).conversionDerivative(lastOutput.at(i));
     }
     return temp;
 }
@@ -110,7 +110,7 @@ shared_ptr<vector<double>> FullyConnected::prediction(vector<double> &dataSet){
     //深度复制
     shared_ptr<vector<double>> val(new vector<double>(dataSet));
 
-    for (int layer = 0; layer < this->hidden->size(); layer++) {
+    for (unsigned layer = 0; layer < this->hidden->size(); layer++) {
         //输入隐层
         //获取隐层数值
         val = this->predictionLayer(this->hidden->at(layer), *val);
@@ -186,9 +186,8 @@ double FullyConnected::startTrain(vector<TrainingSet> &trainSets, int times, dou
             }
             cout<<"No:\t"<<nowTime<<"\ttraining,AverageError is :\t"<<error<<endl;
         }
-    } while (error>0.001);
+    } while (times>=nowTime);
     return error;
 }
 FullyConnected::~FullyConnected() {
-
 }

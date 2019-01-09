@@ -37,6 +37,12 @@ public:
      */
     double conversion(double val);
     /**
+     * 挤压函数求导
+     * @param val
+     * @return
+     */
+    double conversionDerivative(double val);
+    /**
      * 修正函数
      * @param lastInput 当前层正向预测输入值
      * @param slope   反向更新斜率g_j -∂Ek/∂(y'),Ek=1/2*(y'-y)^2
@@ -44,6 +50,11 @@ public:
      * @return
      */
     vector<double> correct(vector<double>&  lastInput, double slope, double rate);
+    /**
+     * 赋值拷贝
+     * @param other
+     * @return
+     */
     Neurons& operator=(const Neurons& other);
     ~Neurons();
     shared_ptr<vector<double>> weights;
