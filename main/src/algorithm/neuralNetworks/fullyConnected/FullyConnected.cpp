@@ -3,7 +3,7 @@
 //
 
 #include"algorithm/neuralNetworks/ConnectedModule.h"
-#include "algorithm/neuralNetworks/class/Neurons.h"
+#include "algorithm/neuralNetworks/class/NeuronHidden.h"
 #include "algorithm/neuralNetworks/class/TrainingSet.h"
 
 struct {
@@ -26,16 +26,17 @@ FullyConnected::FullyConnected(unsigned inp_hid_out[], unsigned hid_Cnt[], int r
     unsigned outputCnts=inp_hid_out[2];
     //记录权重
     unsigned weightCnt = inputCnts;
-    this->hidden.reset(new vector<vector<Neurons>>(hiddenCnts));
-    this->outPut.reset(new vector<Neurons>(outputCnts));
+    this->intPut.reset(new vector<NeuronInput>(inputCnts));
+    this->hidden.reset(new vector<vector<NeuronHidden>>(hiddenCnts));
+    this->outPut.reset(new vector<NeuronOutput>(outputCnts));
 
     //初始化神经网络(层数(具体个数))
     for (unsigned i = 0; i < hidden->size(); ++i) {
-        hidden->at(i) = vector<Neurons>(hid_Cnt[i]);
-        vector<Neurons>& item=hidden->at(i);
+        hidden->at(i) = vector<NeuronHidden>(hid_Cnt[i]);
+        vector<NeuronHidden>& item=hidden->at(i);
         //手动初始化
         for (unsigned  j = 0; j < hid_Cnt[i]; j++) {
-            item.at(j)= Neurons(weightCnt, randRange);
+            item.at(j)= NeuronHidden(weightCnt, randRange);
         }
         //下一个权重
         weightCnt = item.size();
@@ -43,8 +44,9 @@ FullyConnected::FullyConnected(unsigned inp_hid_out[], unsigned hid_Cnt[], int r
 
     //赋值给神经网络输出层
     for (auto &i : *outPut) {
-        i = Neurons(weightCnt, randRange);
+        i = NeuronOutput(weightCnt, randRange);
     }
+
 
 }
 
@@ -65,11 +67,11 @@ double FullyConnected::trainByPrediction(vector<vector<double>> &hiddenOutPut, T
         double reduce = -(prediction-trainingSet.trainAnswers->at(i));
         ret += reduce * reduce*0.5;
         //输出层误差斜率
-        slop->at(i) = (reduce) * prediction * (1 - prediction);
+        slop->at(i) = (reduce) *this->outPut->at(i).conversionDerivative(prediction);
     }
     ret /= trainingSet.trainAnswers->size();
     //传入输出层
-    shared_ptr<vector<vector<double>>> oldW (this->tarinLayer(*this->outPut, *slop,hiddenOutPut.at(hiddenOutPut.size()-1), rate));
+    shared_ptr<vector<vector<double>>> oldW (this->tarinLayer_Out(*this->outPut, *slop,hiddenOutPut.at(hiddenOutPut.size()-1), rate));
     //重置slop
     slop.reset(this->calculationWeight(this->hidden->at(this->hidden->size()-1),*slop, *oldW,hiddenOutPut.at(hiddenOutPut.size()-1)));
 
@@ -86,7 +88,7 @@ double FullyConnected::trainByPrediction(vector<vector<double>> &hiddenOutPut, T
 }
 
 
-vector<double>* FullyConnected::calculationWeight(vector<Neurons> &beforNeurons,vector<double> &slop, vector<vector<double>> &oldW, vector<double> &lastOutput) {
+vector<double>* FullyConnected::calculationWeight(vector<NeuronHidden> &beforNeurons,vector<double> &slop, vector<vector<double>> &oldW, vector<double> &lastOutput) {
     //构建上一神经元斜率
     vector<double>* temp =new vector<double>(lastOutput.size());
     //以当前斜率与旧权重,构建上个全重
@@ -107,7 +109,7 @@ vector<double>* FullyConnected::calculationWeight(vector<Neurons> &beforNeurons,
 
 vector<double>* FullyConnected:: prediction(vector<double> &dataSet){
     //深度复制
-    shared_ptr<vector<double>> val(new vector<double>(dataSet));
+    shared_ptr<vector<double>> val(this->predictionLayer_Input(*this->intPut, dataSet));
 
     for (unsigned layer = 0; layer < this->hidden->size(); layer++) {
         //输入隐层
@@ -115,15 +117,34 @@ vector<double>* FullyConnected:: prediction(vector<double> &dataSet){
         val.reset(this->predictionLayer(this->hidden->at(layer), *val));
     }
     //获取输出层
-    return this->predictionLayer(*this->outPut, *val);
+    return this->predictionLayer_Output(*this->outPut, *val);
 }
 
 
-vector<double>* FullyConnected::predictionLayer(vector<Neurons> &neurons, vector<double> &inputDatas){
+vector<double>* FullyConnected::predictionLayer(vector<NeuronHidden> &neurons, vector<double> &inputDatas){
     vector<double>* rets(new vector<double>(neurons.size()));
     for (unsigned i = 0; i < neurons.size(); i++) {
-        Neurons &item = neurons.at(i);
+        auto &item = neurons.at(i);
         double val = item.calculate(inputDatas);
+        rets->at(i) = item.conversion(val);
+    }
+    return rets;
+}
+
+vector<double>* FullyConnected::predictionLayer_Output(vector<NeuronOutput> &neurons, vector<double> &inputDatas){
+    vector<double>* rets(new vector<double>(neurons.size()));
+    for (unsigned i = 0; i < neurons.size(); i++) {
+        auto &item = neurons.at(i);
+        double val = item.calculate(inputDatas);
+        rets->at(i) = item.conversion(val);
+    }
+    return rets;
+}
+vector<double>* FullyConnected::predictionLayer_Input(vector<NeuronInput> &neurons, vector<double> &inputDatas){
+    vector<double>* rets(new vector<double>(neurons.size()));
+    for (unsigned i = 0; i < neurons.size(); i++) {
+        auto &item = neurons.at(i);
+        double val = item.calculate(inputDatas.at(i));
         rets->at(i) = item.conversion(val);
     }
     return rets;
@@ -132,7 +153,8 @@ vector<double>* FullyConnected::predictionLayer(vector<Neurons> &neurons, vector
 
 vector<vector<double>>* FullyConnected::predictionByTrain(TrainingSet &tarinSet){
     vector<vector<double>>* ret(new vector<vector<double>>(this->hidden->size()));
-    shared_ptr<vector<double>> val(new vector<double>(*tarinSet.trainDatas));
+    shared_ptr<vector<double>> val(this->predictionLayer_Input(*this->intPut, *tarinSet.trainDatas));
+
 
     for (unsigned layer = 0; layer < this->hidden->size(); layer++) {
         //输入隐层
@@ -141,12 +163,12 @@ vector<vector<double>>* FullyConnected::predictionByTrain(TrainingSet &tarinSet)
         //深度复制
         ret->at(layer) =*val;
     }
-    val.reset(this->predictionLayer(*this->outPut, *val));
+    val.reset(this->predictionLayer_Output(*this->outPut, *val));
     tarinSet.prediction.reset(new vector<double>(*val));
     return ret;
 }
 
-vector<vector<double>>* FullyConnected::tarinLayer(vector<Neurons> &neurons,vector<double> &slop, vector<double>&lastIntput,double rate){
+vector<vector<double>>* FullyConnected::tarinLayer(vector<NeuronHidden> &neurons,vector<double> &slop, vector<double>&lastIntput,double rate){
     //记录神经元的旧权重
     vector<vector<double>>* ret(new vector<vector<double>>(neurons.size()));
 
@@ -158,6 +180,17 @@ vector<vector<double>>* FullyConnected::tarinLayer(vector<Neurons> &neurons,vect
     return ret;
 }
 
+vector<vector<double>>* FullyConnected::tarinLayer_Out(vector<NeuronOutput> &neurons,vector<double> &slop, vector<double>&lastIntput,double rate){
+    //记录神经元的旧权重
+    vector<vector<double>>* ret(new vector<vector<double>>(neurons.size()));
+
+    for (unsigned i = 0; i < slop.size(); i++) {
+        auto& item = neurons.at(i);
+        //获取旧权重
+        ret->at(i) = item.correct(lastIntput, slop.at(i), rate);
+    }
+    return ret;
+}
 
 double FullyConnected::singleTraining(TrainingSet &trainSet,double rate){
     shared_ptr<vector<vector<double>>> hiddenOutput(this->predictionByTrain(trainSet));

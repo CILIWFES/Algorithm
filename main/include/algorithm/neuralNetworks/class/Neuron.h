@@ -5,43 +5,56 @@
 #include <random>
 #include <memory>
 #include "TrainingSet.h"
-#define e 2.71828182846
 
+#define e 2.71828182846
 using std::vector, std::shared_ptr;
 
-class Neurons {
+class Neuron {
 public:
-    Neurons();
+    Neuron();
+
     /**
     * 拷贝构造
     * @param other
     */
-    Neurons(const Neurons& other);
+    Neuron(const Neuron &other);
+
     /**
      * 生成神经网络
      * @param weightCnts  权重参数数量
      * @param range    生成随机数范围
      */
-    Neurons(unsigned weightCnts, int range[]);
+    Neuron(unsigned weightCnts, int range[]);
+
+    /**
+     * 赋值拷贝
+     * @param other
+     * @return
+     */
+    Neuron &operator=(const Neuron &other);
+
 
     /**
     * 正向传播,传递该神经元计算值
     * @param vals 上一层参数
     * @return 计算完成的值
     */
-    double calculate(vector<double>& vals);
+    virtual double calculate(vector<double> &vals) = 0;
+
     /**
      * 挤压函数
      * @param val 当前层计算值
      * @return 挤压返回值
      */
-    double conversion(double val);
+    virtual double conversion(double val) = 0;
+
     /**
      * 挤压函数求导
      * @param val
      * @return
      */
-    double conversionDerivative(double val);
+    virtual double conversionDerivative(double val) = 0;
+
     /**
      * 修正函数
      * @param lastInput 当前层正向预测输入值
@@ -49,20 +62,14 @@ public:
      * @param rate    学习因子
      * @return
      */
-    vector<double> correct(vector<double>&  lastInput, double slope, double rate);
-    /**
-     * 赋值拷贝
-     * @param other
-     * @return
-     */
-    Neurons& operator=(const Neurons& other);
-    ~Neurons();
-    shared_ptr<vector<double>> weights;
+    virtual vector<double> correct(vector<double> &lastInput, double slope, double rate) = 0;
 
-private:
-    //随机引擎
-    static std::default_random_engine myRand;
+    ~Neuron();
+
+protected:
     double bias;
-    shared_ptr<TrainingSet> b;
+    shared_ptr<vector<double>> weights;
+    static std::default_random_engine myRand;
 };
+
 

@@ -1,6 +1,8 @@
 #pragma once
 
-#include "algorithm/neuralNetworks/class/Neurons.h"
+#include "algorithm/neuralNetworks/class/NeuronHidden.h"
+#include "algorithm/neuralNetworks/class/NeuronInput.h"
+#include "algorithm/neuralNetworks/class/NeuronOutput.h"
 #include "algorithm/neuralNetworks/class/TrainingSet.h"
 
 
@@ -54,7 +56,8 @@ protected:
      * @param lastOutput  当前神经元挤压输出
      * @return 下一个斜率
      */
-    vector<vector<double>>* tarinLayer(vector<Neurons> &neurons,vector<double> &slop, vector<double>&lastIntput ,double rate);
+    vector<vector<double>>* tarinLayer(vector<NeuronHidden> &neurons,vector<double> &slop, vector<double>&lastIntput ,double rate);
+    vector<vector<double>>* tarinLayer_Out(vector<NeuronOutput> &neurons,vector<double> &slop, vector<double>&lastIntput ,double rate);
 
 
     /**
@@ -63,7 +66,9 @@ protected:
      * @param inputDatas  输入向量
      * @return 当前神经元挤压输出
      */
-    vector<double>* predictionLayer(vector<Neurons> &neurons, vector<double> &inputDatas);
+    vector<double>* predictionLayer(vector<NeuronHidden> &neurons, vector<double> &inputDatas);
+    vector<double>* predictionLayer_Output(vector<NeuronOutput> &neurons, vector<double> &inputDatas);
+    vector<double>* predictionLayer_Input(vector<NeuronInput> &neurons, vector<double> &inputDatas);
 
 private:
 
@@ -78,16 +83,20 @@ private:
      * @param lastOutput 当前神经元的输出
      * @return
      */
-    vector<double>* calculationWeight(vector<Neurons>& beforNeurons,vector<double> &slop, vector<vector<double>> &oldW, vector<double> &lastOutput);
+    vector<double>* calculationWeight(vector<NeuronHidden>& beforNeurons,vector<double> &slop, vector<vector<double>> &oldW, vector<double> &lastOutput);
 
     /**
      * 二维隐藏层指针
      */
-    shared_ptr<vector<vector<Neurons>>> hidden;
+    shared_ptr<vector<vector<NeuronHidden>>> hidden;
 
     /**
      * 一维输出层指针
      */
-    shared_ptr<vector<Neurons>> outPut;
+    shared_ptr<vector<NeuronOutput>> outPut;
+    /**
+     * 一维输出层指针
+     */
+    shared_ptr<vector<NeuronInput>> intPut;
 
 };
