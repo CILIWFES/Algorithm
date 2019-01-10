@@ -21,6 +21,7 @@ public:
     TrainingSet(vector<double> *trainDatas, vector<double> *trainAnswers);
 
     TrainingSet &operator=(TrainingSet &&trainingSet);
+
     TrainingSet &operator=(TrainingSet &trainingSet);
 
     TrainingSet(TrainingSet &&trainingSet);

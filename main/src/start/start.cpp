@@ -3,46 +3,32 @@
 
 
 int main() {
-    unsigned trainInt=7;
+    int trainInt=6;
     vector<vector<double>*>* trainDatas=new vector<vector<double>*>(0);
-    trainDatas->reserve(trainInt);
+    trainDatas->reserve(trainInt*2*trainInt*2);
     vector<vector<double>*>* trainAnswers=new vector<vector<double>*>(0);
-    trainAnswers->reserve(trainInt);
+    trainAnswers->reserve(trainInt*2*trainInt*2);
 
-    trainDatas->push_back(new vector<double>{0,-1});
-    trainAnswers->push_back(new vector<double>{0});
+    for(int i=-trainInt;i<trainInt;i++){
 
-    trainDatas->push_back(new vector<double>{-1,1});
-    trainAnswers->push_back(new vector<double>{0});
+        for(int j=-trainInt;j<trainInt;j++){
+            trainDatas->push_back(new vector<double>{i*1.0,j*1.0});
+            trainAnswers->push_back(new vector<double>{1.0*(4*i+j)});
+        }
+    }
 
-    trainDatas->push_back(new vector<double>{-1,-1});
-    trainAnswers->push_back(new vector<double>{1});
 
-    trainDatas->push_back(new vector<double>{1,-1});
-    trainAnswers->push_back(new vector<double>{0});
-
-    trainDatas->push_back(new vector<double>{0,0});
-    trainAnswers->push_back(new vector<double>{1});
-
-    trainDatas->push_back(new vector<double>{0,1});
-    trainAnswers->push_back(new vector<double>{0});
-
-    trainDatas->push_back(new vector<double>{1,1});
-    trainAnswers->push_back(new vector<double>{1});
-
-    trainDatas->push_back(new vector<double>{1,0});
-    trainAnswers->push_back(new vector<double>{0});
 
     unsigned inp_hid_out[]={2,1,1};
-    unsigned hid_Cnt[]={2};
+    unsigned hid_Cnt[]={1};
     auto trainTemp = fullyConnected::makeSet(*trainDatas, *trainAnswers);
     delete trainDatas;
     delete trainAnswers;
 
-    int randRange[]={-2,2};
-    auto fullyConnected=fullyConnected::makeFullyConnected(10000, 0.1,inp_hid_out,hid_Cnt,trainTemp,randRange);
+    int randRange[]={-4,4};
+    auto fullyConnected=fullyConnected::makeFullyConnected(10000, 0.1,inp_hid_out,hid_Cnt,trainTemp,randRange,0);
 
-    auto* temp=new vector<double>({1,1});
+    auto* temp=new vector<double>({4,1});
     shared_ptr<vector<double>> ret(fullyConnected->prediction(*temp));
     cout<<"prediction \t";
     for(unsigned i=0;i<ret->size();i++){

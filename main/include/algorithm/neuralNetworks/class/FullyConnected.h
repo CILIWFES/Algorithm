@@ -26,6 +26,9 @@ public:
      */
     double startTrain(vector<TrainingSet> &trainSets, int times, double rate, int modelCheck);
 
+    double singleTraining(TrainingSet &trainSet,double rate);
+    double multipleTraining(vector<TrainingSet> &trainSets,double rate);
+
     ~FullyConnected();
 
 protected:
@@ -64,6 +67,9 @@ protected:
 
 private:
 
+    TrainingSet& mergeTrainSet(TrainingSet& collect,TrainingSet& old,int divisor);
+
+    vector<vector<double>>& mergeOutput(vector<vector<double>>& collect,vector<vector<double>>& oldOutPut,int divisor);
     /**
      * 计算当前层的权值
      * @param beforNeurons  上一层神经元

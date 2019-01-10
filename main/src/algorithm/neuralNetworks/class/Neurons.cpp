@@ -35,14 +35,18 @@ Neurons::Neurons(unsigned weightCnts, int range[]):weights(new vector<double>(we
         //小数部分
         rand2 = myRand();
         if(scope==0){
-            this->weights->at(i) = (rand1 % scope+range1)+(rand2%(10000+1))/10000.0;
-        }else{
             this->weights->at(i) = (rand2%(10000+1))/10000.0;
+        }else{
+            this->weights->at(i) = (rand1 % scope+range1)+(rand2%(10000+1))/10000.0;
         }
     }
     rand1 = myRand();
     rand2 = myRand();
-    this->bias = (rand1 % scope+range1)+(rand2%(1000+1))/1000.0;
+    if(scope==0){
+        this->bias = (rand2%(10000+1))/10000.0;
+    }else{
+        this->bias = (rand1 % scope+range1)+(rand2%(10000+1))/10000.0;
+    }
 }
 
 

@@ -143,7 +143,6 @@ vector<vector<double>>* FullyConnected::predictionByTrain(TrainingSet &tarinSet)
     }
     val.reset(this->predictionLayer(*this->outPut, *val));
     tarinSet.prediction.reset(new vector<double>(*val));
-
     return ret;
 }
 
@@ -158,6 +157,30 @@ vector<vector<double>>* FullyConnected::tarinLayer(vector<Neurons> &neurons,vect
     }
     return ret;
 }
+
+
+double FullyConnected::singleTraining(TrainingSet &trainSet,double rate){
+    shared_ptr<vector<vector<double>>> hiddenOutput(this->predictionByTrain(trainSet));
+    double error=this->trainByPrediction(*hiddenOutput,trainSet,rate);
+    return error;
+}
+
+double FullyConnected::multipleTraining(vector<TrainingSet> &trainSets,double rate){
+    double error=0;
+    shared_ptr<vector<vector<double>>> hiddenOutput(new vector<vector<double>>(this->hidden->size()));
+    shared_ptr<TrainingSet> tempTrain (new TrainingSet());
+    int size=trainSets.size();
+    for(unsigned i=0;i<size;i++){
+        auto& trainSet = trainSets.at(i);
+        shared_ptr<vector<vector<double>>> tempOutput(this->predictionByTrain(trainSet));
+        this->mergeTrainSet(*tempTrain, trainSet,size);
+        this->mergeOutput(*hiddenOutput,*tempOutput,size);
+    }
+    error=this->trainByPrediction(*hiddenOutput,*tempTrain,rate);
+
+    return error;
+}
+
 double FullyConnected::startTrain(vector<TrainingSet> &trainSets, int times, double rate, int modelCheck=0){
     double startRate=rate;
     unsigned nowTime=0;
@@ -165,14 +188,19 @@ double FullyConnected::startTrain(vector<TrainingSet> &trainSets, int times, dou
     int  showTime=times/info.showTime;
     do {
         error=0;
-        for(unsigned i=0;i<trainSets.size();i++){
-            auto& trainSet = trainSets.at(i);
-            shared_ptr<vector<vector<double>>> hiddOutput(this->predictionByTrain(trainSet));
-            error+=this->trainByPrediction(*hiddOutput,trainSet,rate);
+        if(modelCheck==0){
+            for(unsigned i=0;i<trainSets.size();i++){
+                auto& trainSet = trainSets.at(i);
+                //单次训练
+                error+=this->singleTraining(trainSet,rate);
+            }
+            error/=trainSets.size();
+        }else{
+            error=this->multipleTraining(trainSets,rate);
         }
+
         nowTime++;
         if ((nowTime - 1) % showTime == 0) {
-            error/=trainSets.size();
             if(nowTime==1){
                 info.initialValue = error;
             }
@@ -187,6 +215,38 @@ double FullyConnected::startTrain(vector<TrainingSet> &trainSets, int times, dou
         }
     } while (times>=nowTime);
     return error;
+}
+
+TrainingSet& FullyConnected::mergeTrainSet(TrainingSet& collect,TrainingSet& oldTrain,int divisor){
+    if(collect.trainAnswers== nullptr ){
+        collect.trainDatas.reset(new vector<double>(oldTrain.trainDatas->size(),0.0));
+        collect.trainAnswers.reset(new vector<double>(oldTrain.trainAnswers->size(),0.0));
+        collect.prediction.reset(new vector<double>(oldTrain.prediction->size(),0.0));
+    }
+    for(unsigned i=0;i<oldTrain.trainDatas->size();i++){
+        collect.trainDatas->at(i) += oldTrain.trainDatas->at(i)/divisor;
+    }
+    for(unsigned i=0;i<oldTrain.trainAnswers->size();i++){
+        collect.trainAnswers->at(i) += oldTrain.trainAnswers->at(i)/divisor;
+        collect.prediction->at(i) += oldTrain.prediction->at(i)/divisor;
+    }
+    return collect;
+}
+vector<vector<double>>& FullyConnected::mergeOutput(vector<vector<double>>& collect,vector<vector<double>>& oldOutPut,int divisor){
+    if(collect.size()==0){
+        collect.resize(oldOutPut.size());
+    }
+    for(unsigned i = 0;i<oldOutPut.size();i++){
+        vector<double>& itemC=collect.at(i);
+        vector<double>& itemO=oldOutPut.at(i);
+        if(itemC.size()==0){
+            itemC.resize(itemO.size(),0);
+        }
+        for (unsigned j = 0; j < itemO.size(); j++) {
+            itemC.at(j) = itemO.at(j) / divisor;
+        }
+    }
+    return collect;
 }
 FullyConnected::~FullyConnected() {
 }
