@@ -7,14 +7,14 @@
 class FullyConnected {
 public:
 
-    FullyConnected(unsigned inp_hid_out[], unsigned hid_Cnt[], int randRange);
+    FullyConnected(unsigned inp_hid_out[], unsigned hid_Cnt[], int randRange[]);
 
     /**
      * 神经网络预测,并返回预测向量
      * @param dataSet 输入向量
      * @return  输出向量
      */
-    shared_ptr<vector<double>> prediction(vector<double> &dataSet);
+    vector<double>* prediction(vector<double> &dataSet);
 
     /**
      * 开始训练
@@ -43,7 +43,7 @@ protected:
      * @param tarinSet
      * @return  隐藏层挤压输出
      */
-    shared_ptr<vector<vector<double>>> predictionByTrain(TrainingSet &tarinSet);
+    vector<vector<double>>* predictionByTrain(TrainingSet &tarinSet);
 
     /**
      * 逐层训练
@@ -51,7 +51,7 @@ protected:
      * @param lastOutput  当前神经元挤压输出
      * @return 下一个斜率
      */
-    shared_ptr<vector<vector<double>>>tarinLayer(vector<Neurons> &neurons,vector<double> &slop, vector<double>&lastIntput ,double rate);
+    vector<vector<double>>* tarinLayer(vector<Neurons> &neurons,vector<double> &slop, vector<double>&lastIntput ,double rate);
 
 
     /**
@@ -60,7 +60,7 @@ protected:
      * @param inputDatas  输入向量
      * @return 当前神经元挤压输出
      */
-    shared_ptr<vector<double>> predictionLayer(vector<Neurons> &neurons, vector<double> &inputDatas);
+    vector<double>* predictionLayer(vector<Neurons> &neurons, vector<double> &inputDatas);
 
 private:
 
@@ -72,7 +72,7 @@ private:
      * @param lastOutput 当前神经元的输出
      * @return
      */
-    vector<double>& calculationWeight(vector<Neurons>& beforNeurons,vector<double> &slop, vector<vector<double>> &oldW, vector<double> &lastOutput);
+    vector<double>* calculationWeight(vector<Neurons>& beforNeurons,vector<double> &slop, vector<vector<double>> &oldW, vector<double> &lastOutput);
 
     /**
      * 二维隐藏层指针

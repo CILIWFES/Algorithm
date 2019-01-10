@@ -33,13 +33,17 @@ int main() {
     trainDatas->push_back(new vector<double>{1,0});
     trainAnswers->push_back(new vector<double>{0});
 
-    unsigned inp_hid_out[]={2,2,1};
-    unsigned hid_Cnt[]={2,2};
-    auto trainTemp = fullyConnected::makeSet(trainDatas, trainAnswers);
-    auto fullyConnected=fullyConnected::makeFullyConnected(10000, 0.1,inp_hid_out,hid_Cnt,trainTemp);
+    unsigned inp_hid_out[]={2,1,1};
+    unsigned hid_Cnt[]={2};
+    auto trainTemp = fullyConnected::makeSet(*trainDatas, *trainAnswers);
     delete trainDatas;
+    delete trainAnswers;
+
+    int randRange[]={-2,2};
+    auto fullyConnected=fullyConnected::makeFullyConnected(10000, 0.1,inp_hid_out,hid_Cnt,trainTemp,randRange);
+
     auto* temp=new vector<double>({1,1});
-    auto ret=fullyConnected->prediction(*temp);
+    shared_ptr<vector<double>> ret(fullyConnected->prediction(*temp));
     cout<<"prediction \t";
     for(unsigned i=0;i<ret->size();i++){
         if(i==ret->size()-1){

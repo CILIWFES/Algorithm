@@ -22,7 +22,7 @@ public:
      * @param weightCnts  权重参数数量
      * @param range    生成随机数范围
      */
-    Neurons(unsigned weightCnts, int range);
+    Neurons(unsigned weightCnts, int range[]);
 
     /**
     * 正向传播,传递该神经元计算值

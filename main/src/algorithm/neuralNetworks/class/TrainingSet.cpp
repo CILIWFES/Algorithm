@@ -8,17 +8,17 @@ TrainingSet::TrainingSet(vector<double>*trainDatas, vector<double>*trainAnswers)
 
 }
 
-TrainingSet& TrainingSet::operator= (TrainingSet&& trainingSet){
-    this->trainDatas=move(trainingSet.trainDatas);
-    this->trainAnswers=move(trainingSet.trainAnswers);
-    this->prediction=move(trainingSet.prediction);
-    return *this;
-}
-
 TrainingSet& TrainingSet::operator= (TrainingSet& trainingSet){
     this->trainDatas=trainingSet.trainDatas;
     this->trainAnswers=trainingSet.trainAnswers;
     this->prediction=trainingSet.prediction;
+    return *this;
+}
+
+TrainingSet& TrainingSet::operator= (TrainingSet&& trainingSet){
+    this->trainDatas=move(trainingSet.trainDatas);
+    this->trainAnswers=move(trainingSet.trainAnswers);
+    this->prediction=move(trainingSet.prediction);
     return *this;
 }
 
