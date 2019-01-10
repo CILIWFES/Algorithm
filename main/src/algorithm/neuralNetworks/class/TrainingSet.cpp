@@ -9,33 +9,28 @@ TrainingSet::TrainingSet(vector<double>*trainDatas, vector<double>*trainAnswers)
 }
 
 TrainingSet& TrainingSet::operator= (TrainingSet&& trainingSet){
-    this->trainDatas=trainingSet.trainDatas;
-    std::cout<<"ssss"<<&(this->trainDatas)<<"!!!"<<this->trainDatas.get()<<"~~"<<this->trainDatas.use_count()<<"~~"<<std::endl;
-    std::cout<<"ssss"<<&(trainingSet.trainDatas)<<"!!!"<<trainingSet.trainDatas.get()<<"~~"<<trainingSet.trainDatas.use_count()<<"~~"<<std::endl;
-    this->trainAnswers=trainingSet.trainAnswers;
-    this->prediction=trainingSet.prediction;
+    this->trainDatas=move(trainingSet.trainDatas);
+    this->trainAnswers=move(trainingSet.trainAnswers);
+    this->prediction=move(trainingSet.prediction);
     return *this;
 }
 
 TrainingSet& TrainingSet::operator= (TrainingSet& trainingSet){
     this->trainDatas=trainingSet.trainDatas;
-    std::cout<<"&~~~"<<&(this->trainDatas)<<"!!!"<<this->trainDatas.get()<<"~~"<<this->trainDatas.use_count()<<"~~"<<std::endl;
-    std::cout<<"&~~~"<<&(trainingSet.trainDatas)<<"!!!"<<trainingSet.trainDatas.get()<<"~~"<<trainingSet.trainDatas.use_count()<<"~~"<<std::endl;
     this->trainAnswers=trainingSet.trainAnswers;
     this->prediction=trainingSet.prediction;
     return *this;
 }
 
 TrainingSet::TrainingSet(TrainingSet&& trainingSet){
-    this->trainDatas=trainingSet.trainDatas;
-    this->trainAnswers=trainingSet.trainAnswers;
-    this->prediction=trainingSet.prediction;
+    this->trainDatas=move(trainingSet.trainDatas);
+    this->trainAnswers=move(trainingSet.trainAnswers);
+    this->prediction=move(trainingSet.prediction);
 }
 
-TrainingSet::TrainingSet(){
+TrainingSet::TrainingSet():trainDatas(nullptr),trainAnswers(nullptr),prediction(nullptr){
 
 }
 
 TrainingSet::~TrainingSet() {
-    std::cout<<"using~"<<this->trainDatas.use_count()<<"--"<<this->trainDatas.get()<<std::endl;
 }
