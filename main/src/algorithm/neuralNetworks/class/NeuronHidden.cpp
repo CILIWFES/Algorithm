@@ -37,6 +37,7 @@ double NeuronHidden::calculate(vector<double>& vals) {
 double NeuronHidden::conversion(double val) {
     return 1.0 / (1 + pow(e, -val));
 }
+
 double NeuronHidden::conversionDerivative(double val) {
     return val*(1-val);
 }

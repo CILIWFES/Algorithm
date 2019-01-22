@@ -31,12 +31,11 @@ double NeuronOutput::calculate(vector<double>& vals) {
     return val;
 }
 
-
 double NeuronOutput::conversion(double val) {
-    return 1.0 / (1 + pow(e, -val/10000));
+    return 1.0 / (1 + pow(e, -val));
 }
 double NeuronOutput::conversionDerivative(double val) {
-    return (val/10000)*(1-val/10000);
+    return (val)*(1-val);
 }
 vector<double> NeuronOutput::correct(vector<double>& lastInput, double slope, double rate) {
     //复制原始数组
