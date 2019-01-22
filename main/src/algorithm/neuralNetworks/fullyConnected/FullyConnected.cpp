@@ -88,7 +88,7 @@ double FullyConnected::trainByPrediction(vector<vector<double>> &hiddenOutPut, T
 vector<double>* FullyConnected::calculationWeight(vector<NeuronHidden> &beforNeurons,vector<double> &slop, vector<vector<double>> &oldW, vector<double> &lastOutput) {
     //构建上一神经元斜率
     vector<double>* temp =new vector<double>(lastOutput.size());
-    //以当前斜率与旧权重,构建上个全重
+    //以当前斜率与旧权重,构建上个权重
     for (unsigned i = 0; i < slop.size(); i++) {
         double item = slop.at(i);
         auto tempW = oldW.at(i);
