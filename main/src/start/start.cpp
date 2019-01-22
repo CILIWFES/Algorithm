@@ -3,37 +3,35 @@
 
 
 int main() {
-    int trainInt=10;
+    int trainInt=100;
     vector<vector<double>*>* trainDatas=new vector<vector<double>*>(0);
-    trainDatas->reserve(trainInt*2*trainInt*2);
+    trainDatas->reserve(2*trainInt);
     vector<vector<double>*>* trainAnswers=new vector<vector<double>*>(0);
-    trainAnswers->reserve(trainInt*2*trainInt*2);
+    trainAnswers->reserve(2*trainInt);
 
     for(int i=-trainInt;i<trainInt;i++){
 
         for(int j=-trainInt;j<trainInt;j++){
             trainDatas->push_back(new vector<double>{i*1.0,j*1.0});
-            trainAnswers->push_back(new vector<double>{1.0 / (1 + pow(e, -(1.0*(4*i+j))/10000))});
+            trainAnswers->push_back(new vector<double>{sin(i*j)});
         }
     }
 
 
-
-    unsigned inp_hid_out[]={2,1,1};
-    unsigned hid_Cnt[]={2};
+    unsigned inp_hid_out[]={2,10,10,8,1};
     auto trainTemp = fullyConnected::makeSet(*trainDatas, *trainAnswers);
     delete trainDatas;
     delete trainAnswers;
 
-    int randRange[]={-3,3};
-    auto fullyConnected=fullyConnected::makeFullyConnected(100, 0.1,inp_hid_out,hid_Cnt,trainTemp,randRange,1);
+    int randRange[]={-10,10};
+    auto fullyConnected=fullyConnected::makeFullyConnected(10000, 0.1,inp_hid_out,5,trainTemp,randRange,0);
 
-    auto* temp=new vector<double>({3,9});
+    auto* temp=new vector<double>({8,9});
     shared_ptr<vector<double>> ret(fullyConnected->prediction(*temp));
     cout<<"prediction \t";
     for(unsigned i=0;i<ret->size();i++){
         if(i==ret->size()-1){
-            cout<<ret->at(i)<<"\t"<<1.0 / (1 + pow(e, -(4* temp->at(0)+temp->at(1))/10000))<<endl;
+            cout<<ret->at(i)<<"\t"<<sin(temp->at(0)*temp->at(1))<<endl;
         }else{
             cout<<ret->at(i)<<"\t";
         }

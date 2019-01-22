@@ -19,32 +19,29 @@ struct {
     int showTime=20;
 }info;
 
-FullyConnected::FullyConnected(unsigned inp_hid_out[], unsigned hid_Cnt[], int randRange[]){
+FullyConnected::FullyConnected(unsigned inp_hid_out[],unsigned totalFloors, int randRange[]){
     //记录数据
     unsigned inputCnts=inp_hid_out[0];
-    unsigned hiddenCnts=inp_hid_out[1];
-    unsigned outputCnts=inp_hid_out[2];
+    unsigned hiddenFloors=totalFloors-2;
+    unsigned outputCnts=inp_hid_out[totalFloors-1];
     //记录权重
-    unsigned weightCnt = inputCnts;
     this->intPut.reset(new vector<NeuronInput>(inputCnts));
-    this->hidden.reset(new vector<vector<NeuronHidden>>(hiddenCnts));
+    this->hidden.reset(new vector<vector<NeuronHidden>>(hiddenFloors));
     this->outPut.reset(new vector<NeuronOutput>(outputCnts));
 
     //初始化神经网络(层数(具体个数))
     for (unsigned i = 0; i < hidden->size(); ++i) {
-        hidden->at(i) = vector<NeuronHidden>(hid_Cnt[i]);
+        hidden->at(i) = vector<NeuronHidden>(inp_hid_out[i+1]);
         vector<NeuronHidden>& item=hidden->at(i);
         //手动初始化
-        for (unsigned  j = 0; j < hid_Cnt[i]; j++) {
-            item.at(j)= NeuronHidden(weightCnt, randRange);
+        for (unsigned  j = 0; j < inp_hid_out[i+1]; j++) {
+            item.at(j)= NeuronHidden(inp_hid_out[i], randRange);
         }
-        //下一个权重
-        weightCnt = item.size();
     }
 
     //赋值给神经网络输出层
     for (auto &i : *outPut) {
-        i = NeuronOutput(weightCnt, randRange);
+        i = NeuronOutput(inp_hid_out[totalFloors-2], randRange);
     }
 
 
@@ -59,7 +56,6 @@ double FullyConnected::trainByPrediction(vector<vector<double>> &hiddenOutPut, T
     double ret = 0;
     //先计算起始斜率
     shared_ptr<vector<double>> slop( new vector<double>(trainingSet.trainAnswers->size()));
-    //set.trainAnswers.size()必须与误差尺寸相等
     //计算初始斜率
     for (unsigned  i = 0; i < trainingSet.trainAnswers->size(); i++) {
         double prediction = trainingSet.prediction->at(i);
@@ -82,7 +78,8 @@ double FullyConnected::trainByPrediction(vector<vector<double>> &hiddenOutPut, T
         slop.reset(this->calculationWeight(this->hidden->at(i-1),*slop, *oldW, historicalTemp));
     }
 
-    this->tarinLayer(this->hidden->at(0), *slop, *trainingSet.trainDatas, rate);
+    auto temp=this->tarinLayer(this->hidden->at(0), *slop, *trainingSet.trainDatas, rate);
+    delete temp;
 
     return ret;
 }
@@ -180,14 +177,14 @@ vector<vector<double>>* FullyConnected::tarinLayer(vector<NeuronHidden> &neurons
     return ret;
 }
 
-vector<vector<double>>* FullyConnected::tarinLayer_Out(vector<NeuronOutput> &neurons,vector<double> &slop, vector<double>&lastIntput,double rate){
+vector<vector<double>>* FullyConnected::tarinLayer_Out(vector<NeuronOutput> &neurons,vector<double> &slop, vector<double>&lastOutput,double rate){
     //记录神经元的旧权重
     vector<vector<double>>* ret(new vector<vector<double>>(neurons.size()));
 
     for (unsigned i = 0; i < slop.size(); i++) {
         auto& item = neurons.at(i);
         //获取旧权重
-        ret->at(i) = item.correct(lastIntput, slop.at(i), rate);
+        ret->at(i) = item.correct(lastOutput, slop.at(i), rate);
     }
     return ret;
 }
@@ -233,17 +230,8 @@ double FullyConnected::startTrain(vector<TrainingSet> &trainSets, int times, dou
         }
 
         nowTime++;
+        info.initialValue = error;
         if ((nowTime - 1) % showTime == 0) {
-            if(nowTime==1){
-                info.initialValue = error;
-            }
-            if(error!=0){
-                //当前倍率
-                int magnification=info.initialValue/error/info.growthRate;
-                if(magnification>=1 && magnification<info.endRate){
-                    rate=magnification*info.growthFactor*startRate;
-                }
-            }
             cout<<"No:\t"<<nowTime<<"\ttraining,AverageError is :\t"<<error<<endl;
         }
     } while (times>=nowTime);
