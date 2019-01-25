@@ -39,15 +39,15 @@ double NeuronOutput::conversionDerivative(double val) {
 }
 vector<double> NeuronOutput::correct(vector<double>& lastInput, double slope, double rate) {
     //复制原始数组
-    vector<double> saveW(vector<double>(*this->weights));
-    //根据△w+=slope*lastVal
-    for (unsigned i = 0; i < weights->size(); ++i) {
-        double changeVal = rate * slope;
-        this->weights->at(i) += changeVal * lastInput.at(i);
-        this->bias += changeVal;
-    }
+vector<double> saveW(vector<double>(*this->weights));
+//根据△w+=slope*lastVal
+for (unsigned i = 0; i < weights->size(); ++i) {
+double changeVal = rate * slope;
+this->weights->at(i) += changeVal * lastInput.at(i);
+this->bias += changeVal;
+}
 
-    return saveW;
+return saveW;
 }
 
 
