@@ -6,6 +6,8 @@
 
 #include <vector>
 #include <memory>
+#include <Eigen/Dense>
+using namespace Eigen;
 
 
 using std::vector, std::shared_ptr, std::move, std::make_shared;

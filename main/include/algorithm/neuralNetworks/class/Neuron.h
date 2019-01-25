@@ -5,9 +5,11 @@
 #include <random>
 #include <memory>
 #include "TrainingSet.h"
-
 #define e 2.71828182846
 using std::vector, std::shared_ptr;
+#include <Eigen/Dense>
+using namespace Eigen;
+
 
 class Neuron {
 public:
