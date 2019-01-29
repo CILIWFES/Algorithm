@@ -8,11 +8,12 @@ INCLUDE_DIRECTORIES(main/include)
 add_executable(Algorithm
         main/src/start/start.cpp
         main/src/module/performance/time/TimePoint.cpp
-        main/src/algorithm/neuralNetworks/class/NeuronHidden.cpp
-        main/src/algorithm/neuralNetworks/fullyConnected/FullyConnected.cpp
-        main/src/algorithm/neuralNetworks/class/TrainingSet.cpp
-        main/src/algorithm/neuralNetworks/fullyConnected/fullyConnectedStart.cpp
-        main/src/algorithm/neuralNetworks/class/Neuron.cpp
-        main/src/algorithm/neuralNetworks/class/NeuronOutput.cpp
-        main/src/algorithm/neuralNetworks/class/NeuronInput.cpp
-        )
+#        main/src/algorithm/neuralNetworks/class/NeuronHidden.cpp
+#        main/src/algorithm/neuralNetworks/fullyConnected/FullyConnected.cpp
+#        main/src/algorithm/neuralNetworks/class/TrainingSet.cpp
+#        main/src/algorithm/neuralNetworks/fullyConnected/fullyConnectedStart.cpp
+#        main/src/algorithm/neuralNetworks/class/Neuron.cpp
+#        main/src/algorithm/neuralNetworks/class/NeuronOutput.cpp
+#        main/src/algorithm/neuralNetworks/class/NeuronInput.cpp
+#        main/src/algorithm/neuralNetworks/class/FullyConnectedNeuralNetwork.cpp
+)
