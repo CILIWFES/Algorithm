@@ -4,7 +4,11 @@
 
 using namespace std;
 
-int main() {
+int main(){
+    MatrixXd* kk=new MatrixXd(4,4);
+    cout<<*kk;
+}
+int main1() {
     unsigned size= 10*10;
     double *arr = new double[size];
     for (int i = 0; i < size; i++) {
