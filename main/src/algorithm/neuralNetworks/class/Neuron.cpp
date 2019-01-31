@@ -15,7 +15,8 @@
 #include <iostream>
 
 //声明静态变量
-std::default_random_engine Neuron::myRand(time(nullptr));    // 将种子值设置为时间
+// 将种子值设置为时间
+std::default_random_engine Neuron::myRand(time(nullptr));
 Neuron::Neuron():weights(nullptr){};
 
 Neuron::Neuron(const Neuron& other):weights(new vector<double>(*other.weights.get())){

@@ -5,10 +5,15 @@
 using namespace std;
 
 int main(){
-    MatrixXd* kk=new MatrixXd(4,4);
-    cout<<*kk;
+    MatrixXd& kk=*new MatrixXd(4,4);
+    ArrayXd& arr=*new ArrayXd(8);
+    kk.array()=arr;
+
+    cout<< kk;
+    cout<< kk.rows();
+    cout<< kk.cols();
 }
-int main1() {
+void main1() {
     unsigned size= 10*10;
     double *arr = new double[size];
     for (int i = 0; i < size; i++) {
@@ -41,7 +46,7 @@ int main1() {
             }
         }
     }
-    cout << "sum:" << endl << sum<< endl;
+    cout << "sum:"  << sum<< endl;
     timePoint.showPoint();
 
 }
