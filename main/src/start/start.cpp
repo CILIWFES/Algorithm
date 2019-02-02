@@ -4,53 +4,59 @@
 
 using namespace std;
 
-int main(){
-    MatrixXd& kk=*new MatrixXd(4,4);
-    ArrayXd& arr=*new ArrayXd(8);
-    kk.array()=arr;
+int main() {
 
-    cout<< kk;
-    cout<< kk.rows();
-    cout<< kk.cols();
-}
-void main1() {
-    unsigned size= 10*10;
-    double *arr = new double[size];
-    for (int i = 0; i < size; i++) {
-        arr[i] = i;
-    }
-    double *arr2 = new double[size];
-    for (int i = 0; i < size; i++) {
-        arr2[i] = i+1;
-    }
-    unsigned int sqr = (unsigned int)sqrt(size);
-    MatrixXd m = MatrixXd::Map(arr, sqr, sqr);
-    MatrixXd m2 = MatrixXd::Map(arr2, sqr, sqr);
-
-
-    int time=10000;
-    double sum;
-    timePoint.setPoint();
-    for(int i=0;i<time;i++){
-        sum=(m*m2).sum();
-    }
-    cout << "sum:" << endl << sum<< endl;
-    timePoint.showPoint();
-
-    timePoint.setPoint();
-    for(int i=0;i<time;i++){
-        sum=0;
-        for(int j=0;j<size;j++){
-            for(int k=0;k<sqr;k++){
-                sum+=arr[j]*arr2[j/sqr+k*sqr];
-            }
-        }
-    }
-    cout << "sum:"  << sum<< endl;
-    timePoint.showPoint();
+//    auto pFunction = random(10, 20);
+//    MatrixXd m = MatrixXd::Zero(10, 10).unaryExpr(pFunction);
+//    cout << "Gaussian random matrix:\n" << m << endl;
+//    cout << "Mean: " << m.mean() << endl;
+//    MatrixXd m2 = (m.array() - m.mean()) * (m.array() - m.mean());
+//    cout << "std: " << sqrt(m2.sum() / (m2.size() - 1)) << endl;
 
 }
+
+//int main(){
+//    MatrixXd& kk=*new MatrixXd(4,4);
+//    ArrayXd& arr=*new ArrayXd(8);
+//    kk.array()=arr;
 //
+//    cout<< kk;
+//    cout<< kk.rows();
+//    cout<< kk.cols();
+//}
+//void main1() {
+//    unsigned size= 10*10;
+//    double *arr = new double[size];
+//    for (int i = 0; i < size; i++) {
+//        arr[i] = i;
+//    }
+//    double *arr2 = new double[size];
+//    for (int i = 0; i < size; i++) {
+//        arr2[i] = i+1;
+//    }
+//    unsigned int sqr = (unsigned int)sqrt(size);
+//    MatrixXd m = MatrixXd::Map(arr, sqr, sqr);
+//    MatrixXd m2 = MatrixXd::Map(arr2, sqr, sqr);
+//
+//    int time=10000;
+//    double sum;
+//    for(int i=0;i<time;i++){
+//        sum=(m*m2).sum();
+//    }
+//    cout << "sum:" << endl << sum<< endl;
+//
+//    for(int i=0;i<time;i++){
+//        sum=0;
+//        for(int j=0;j<size;j++){
+//            for(int k=0;k<sqr;k++){
+//                sum+=arr[j]*arr2[j/sqr+k*sqr];
+//            }
+//        }
+//    }
+//    cout << "sum:"  << sum<< endl;
+//
+//}
+
 //int test1() {
 //    int trainInt = 10;
 //    vector<vector<double> *> *trainDatas = new vector<vector<double> *>(0);

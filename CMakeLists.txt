@@ -15,5 +15,6 @@ add_executable(Algorithm
 #        main/src/algorithm/neuralNetworks/class/Neuron.cpp
 #        main/src/algorithm/neuralNetworks/class/NeuronOutput.cpp
 #        main/src/algorithm/neuralNetworks/class/NeuronInput.cpp
-#        main/src/algorithm/neuralNetworks/class/FullyConnectedNeuralNetwork.cpp
-)
+        main/src/algorithm/neuralNetworks/class/FullyConnectedNeuralNetwork.cpp
+        main/src/base/base.cpp
+        )
