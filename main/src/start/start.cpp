@@ -6,12 +6,25 @@ using namespace std;
 
 int main() {
 
-//    auto pFunction = random(10, 20);
-//    MatrixXd m = MatrixXd::Zero(10, 10).unaryExpr(pFunction);
-//    cout << "Gaussian random matrix:\n" << m << endl;
-//    cout << "Mean: " << m.mean() << endl;
-//    MatrixXd m2 = (m.array() - m.mean()) * (m.array() - m.mean());
-//    cout << "std: " << sqrt(m2.sum() / (m2.size() - 1)) << endl;
+
+    auto a=MatrixXd(3,3);
+    auto b=VectorXd(3);
+    auto c=VectorXd(3);
+    a.setRandom();
+    b<<1,2,3;
+//    auto ret=a.block(0,0,0,a.cols()).cwiseProduct(b);
+    cout << a<<endl;
+    cout << a.transpose()<<endl;
+    cout << a<<endl;
+
+//    cout << b<<endl;
+//    cout << ret<<endl;
+    for(unsigned int i=0;i<a.cols();i++){
+        a.block(0,i,a.rows(),1)=a.block(0, i, 1, a.cols()).cwiseProduct(b);
+    }
+//    cout<<a<<endl;
+
+    return 0;
 
 }
 
