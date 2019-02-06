@@ -1,6 +1,9 @@
 
 #include <algorithm/neuralNetworks/class/FullyConnectedNeuralNetwork.h>
 
+//全连接打印次数
+unsigned int NUMBEROFPRINTS = 10;
+
 auto FullyConnectedNeuralNetwork::random_engine(double mean, double standardDeviation) {
     auto closure = [mean, standardDeviation](double dump) {
         return random_evenly_distributed(mean, standardDeviation);
@@ -9,24 +12,24 @@ auto FullyConnectedNeuralNetwork::random_engine(double mean, double standardDevi
 }
 
 FullyConnectedNeuralNetwork::FullyConnectedNeuralNetwork(unsigned int inp_hid_out[], unsigned int totalFloors,
-                                                         double mean, double standardDeviation) {
+                                                         double startNum, double endNum) {
     if (totalFloors <= 1) {
         throw "请输入尺寸大于1";
     }
     //Generating closure
-    auto random = this->random_engine(mean, standardDeviation);
+    auto random = this->random_engine(startNum, endNum);
 
     //set the neuron list capacity
     this->layerNeuronWeights.reserve(totalFloors);
 
     //Random input matrix weight
-    this->layerNeuronWeights.at(0) = MatrixXd(inp_hid_out[0], 1);
+    this->layerNeuronWeights.emplace_back(MatrixXd(inp_hid_out[0], inp_hid_out[0]));
     this->layerNeuronWeights.at(0).setIdentity();
 
     //Generating RandomMatrix
     for (unsigned int i = 1; i < totalFloors; i++) {
         //Generating matrix and randomize
-        this->layerNeuronWeights.at(i) = MatrixXd(inp_hid_out[i - 1], inp_hid_out[i]).unaryExpr(random);
+        this->layerNeuronWeights.emplace_back(MatrixXd(inp_hid_out[i], inp_hid_out[i - 1]).unaryExpr(random));
     }
 }
 
@@ -42,12 +45,24 @@ VectorXd FullyConnectedNeuralNetwork::conversionDerivative(VectorXd &outPut) {
 vector<VectorXd> FullyConnectedNeuralNetwork::feedforwardCalculation(VectorXd &trainDate) {
     vector<VectorXd> recording(0);
     recording.reserve(this->layerNeuronWeights.size());
-    VectorXd lastOutput = trainDate;
-    for (auto &item : this->layerNeuronWeights) {
+    VectorXd lastOutput(trainDate);
+
+    for (unsigned int i = 0; i < this->layerNeuronWeights.size(); ++i) {
+        auto &item = this->layerNeuronWeights.at(i);
         lastOutput = (item * lastOutput).transpose();
+        if(i!=0)this->conversion(lastOutput);
         recording.emplace_back(lastOutput);
     }
     return recording;
+}
+VectorXd FullyConnectedNeuralNetwork::prediction(VectorXd &input) {
+    VectorXd lastOutput = input;
+    for (unsigned int i = 0; i < this->layerNeuronWeights.size(); ++i) {
+        auto &item = this->layerNeuronWeights.at(i);
+        lastOutput = (item * lastOutput).transpose();
+        if(i!=0)this->conversion(lastOutput);
+    }
+    return lastOutput;
 }
 
 VectorXd FullyConnectedNeuralNetwork::train(vector<VectorXd> &trainData, vector<VectorXd> &answer, int train_model,
@@ -84,8 +99,6 @@ VectorXd FullyConnectedNeuralNetwork::train(vector<VectorXd> &trainData, vector<
     /**主流程**/
     do {
         /**清除标记**/
-        //记录清0
-        if (nowTimes % (nowTimes / NUMBEROFPRINTS) == 0) errRate.setZero();
         //批量训练清0
         if (train_model == 2) {
             avg_errD.setZero();
@@ -100,8 +113,9 @@ VectorXd FullyConnectedNeuralNetwork::train(vector<VectorXd> &trainData, vector<
             VectorXd err = this->calculationError(out.back(), answer.at(i));
             //计算误差导数
             VectorXd errD = this->calculatedErrorDerivative(out.back(), answer.at(i));
+
             //记录误差
-            if (nowTimes % (nowTimes / NUMBEROFPRINTS) == 0) errRate += err / trainSize;
+            if (nowTimes % (times / NUMBEROFPRINTS) == 0) errRate += err / trainSize;
 
             /**模式分支**/
             if (train_model == 1) {
@@ -117,17 +131,14 @@ VectorXd FullyConnectedNeuralNetwork::train(vector<VectorXd> &trainData, vector<
         }
         /**批量训练位置**/
         if (train_model == 2) this->reverseTraining(avgOut, avg_errD, rate);
+        //打印进程
+        if (nowTimes % (times / NUMBEROFPRINTS) == 0) {
+            cout << "numberOfTimes:\t" << nowTimes + 1 << "\t avg_errorRate:\t" << errRate << endl;
+            errRate.setZero();
+        };
         nowTimes++;
     } while (times > nowTimes);
     return errRate;
-}
-
-VectorXd FullyConnectedNeuralNetwork::prediction(VectorXd &input) {
-    VectorXd lastOutput = input;
-    for (auto &item : this->layerNeuronWeights) {
-        lastOutput = (item * lastOutput).transpose();
-    }
-    return lastOutput;
 }
 
 void FullyConnectedNeuralNetwork::reverseTraining(vector<VectorXd> &layerNeuronOutputs, VectorXd &errorDerivative,
@@ -143,16 +154,17 @@ void FullyConnectedNeuralNetwork::reverseTraining(vector<VectorXd> &layerNeuronO
         //获取输入值 x
         VectorXd &lastIntput = layerNeuronOutputs.at(i - 1);
         //计算权重修改值 △w=η*eh*x
-        MatrixXd changeVal = rate * derivative * (lastIntput.transpose());
+        MatrixXd changeVal = rate * (derivative * (lastIntput.transpose()));
         //---计算上一层修正系数 befor_eh(beforlayer_no_* c(f(x)))=∑w(layer)*eh(layer)
         derivative = (weight.transpose() * derivative).transpose();
         //修改当前权重
         weight += changeVal;
+
     }
 }
 
 VectorXd FullyConnectedNeuralNetwork::calculationError(VectorXd output, VectorXd answer) {
-    return (answer - output).cwiseProduct(answer - output) / 2.0;
+    return pow(answer.array() - output.array(), 2) / 2.0;
 }
 
 VectorXd FullyConnectedNeuralNetwork::calculatedErrorDerivative(VectorXd output, VectorXd answer) {

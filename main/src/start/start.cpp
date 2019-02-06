@@ -1,132 +1,51 @@
-
-#include "algorithm\neuralNetworks\base.h"
-
-
+#include <algorithm/neuralNetworks/class/FullyConnectedNeuralNetwork.h>
 using namespace std;
 
-int main() {
-
-
-    auto a=MatrixXd(3,3);
-    auto b=VectorXd(3);
-    auto c=VectorXd(3);
-    a.setRandom();
-    b<<1,2,3;
-//    auto ret=a.block(0,0,0,a.cols()).cwiseProduct(b);
-    cout << a<<endl;
-    cout << a.transpose()<<endl;
-    cout << a<<endl;
-
-//    cout << b<<endl;
-//    cout << ret<<endl;
-    for(unsigned int i=0;i<a.cols();i++){
-        a.block(0,i,a.rows(),1)=a.block(0, i, 1, a.cols()).cwiseProduct(b);
+vector<VectorXd> makeTrainData(unsigned int num,unsigned int inSize,double startNum,double endNum){
+    vector<VectorXd> ret(0);
+    ret.reserve(num);
+    for(unsigned int i=0;i<num;++i){
+        ret.emplace_back(VectorXd(inSize).unaryExpr([startNum,endNum](double dump){ return random_evenly_distributed(startNum,endNum);}));
     }
-//    cout<<a<<endl;
+    return ret;
+}
+vector<VectorXd> makeAnswer(vector<VectorXd>& trainData, unsigned int outSize){
+    vector<VectorXd> ret(0);
+    ret.reserve(trainData.size());
+    for(unsigned int i=0;i<trainData.size();++i){
+        auto &item = trainData.at(i);
+        ret.emplace_back(VectorXd(outSize));
+        //单层感知器
+        ret.at(i) << (1 / (1 + pow(E, -(item(0)+item(1))))) ;
+        /**分类器**/
+        //在线上+,在线下- (一维)
+        //ret.at(i) << ((item(0)+item(1))>0 ? 1.0 : 0.0);
 
-    return 0;
+        //交叉线(二维) y=-x y=x 左右- 上下+
+        //ret.at(i) << ( (item(0)+item(1)<0 && item(1)-item(0)>0)||(item(0)+item(1)>0 && item(1)-item(0)<0) ? 1.0 : 0.0);
+
+        //在圆内(多维)
+        //ret.at(i) << (pow(item(0), 2) + pow(item(1), 2) <= 1 ? 1.0 : 0.0);
+    }
+    return ret;
 
 }
 
-//int main(){
-//    MatrixXd& kk=*new MatrixXd(4,4);
-//    ArrayXd& arr=*new ArrayXd(8);
-//    kk.array()=arr;
-//
-//    cout<< kk;
-//    cout<< kk.rows();
-//    cout<< kk.cols();
-//}
-//void main1() {
-//    unsigned size= 10*10;
-//    double *arr = new double[size];
-//    for (int i = 0; i < size; i++) {
-//        arr[i] = i;
-//    }
-//    double *arr2 = new double[size];
-//    for (int i = 0; i < size; i++) {
-//        arr2[i] = i+1;
-//    }
-//    unsigned int sqr = (unsigned int)sqrt(size);
-//    MatrixXd m = MatrixXd::Map(arr, sqr, sqr);
-//    MatrixXd m2 = MatrixXd::Map(arr2, sqr, sqr);
-//
-//    int time=10000;
-//    double sum;
-//    for(int i=0;i<time;i++){
-//        sum=(m*m2).sum();
-//    }
-//    cout << "sum:" << endl << sum<< endl;
-//
-//    for(int i=0;i<time;i++){
-//        sum=0;
-//        for(int j=0;j<size;j++){
-//            for(int k=0;k<sqr;k++){
-//                sum+=arr[j]*arr2[j/sqr+k*sqr];
-//            }
-//        }
-//    }
-//    cout << "sum:"  << sum<< endl;
-//
-//}
+int main() {
+    unsigned int inp_hid_oup[]={2,1};
+    unsigned int totalFloors = 2;
 
-//int test1() {
-//    int trainInt = 10;
-//    vector<vector<double> *> *trainDatas = new vector<vector<double> *>(0);
-//    trainDatas->reserve(2 * trainInt * 2 * trainInt);
-//    vector<vector<double> *> *trainAnswers = new vector<vector<double> *>(0);
-//    trainAnswers->reserve(2 * trainInt * 2 * trainInt);
-//
-//    for (double i = -trainInt; i < trainInt; i += 1) {
-//
-//        for (double j = -trainInt; j < trainInt; j += 1) {
-//            trainDatas->push_back(new vector<double>{i * 1.0, j * 1.0});
-//            trainAnswers->push_back(new vector<double>{i >= 0 ? (j >= 0 ? 1.0 : 0.0) : (j < 0 ? 1.0 : 0.0)});
-//        }
-//    }
-////    trainDatas->push_back(new vector<double>{0,1});
-////    trainDatas->push_back(new vector<double>{1,0});
-////    trainDatas->push_back(new vector<double>{1,1});
-////    trainDatas->push_back(new vector<double>{0,0});
-////    trainAnswers->push_back(new vector<double>{0});
-////    trainAnswers->push_back(new vector<double>{0});
-////    trainAnswers->push_back(new vector<double>{1});
-////    trainAnswers->push_back(new vector<double>{1});
-//
-//    unsigned inp_hid_out[] = {2, 4, 2, 1};
-//    auto trainTemp = fullyConnected::makeSet(*trainDatas, *trainAnswers);
-//    delete trainDatas;
-//    delete trainAnswers;
-//
-//    int randRange[] = {-2, 2};
-//    auto fullyConnected = fullyConnected::makeFullyConnected(5000, 1, inp_hid_out, 4, trainTemp, randRange, 0);
-//
-//    auto *temp = new vector<double>({-8, 5});
-//    shared_ptr<vector<double>> ret(fullyConnected->prediction(*temp));
-//    cout << "prediction \t";
-//    for (unsigned i = 0; i < ret->size(); i++) {
-//        if (i == ret->size() - 1) {
-//            cout << ret->at(i) << "\t"
-//                 << (temp->at(0) >= 0 ? (temp->at(1) >= 0 ? 1.0 : 0.0) : (temp->at(1) < 0 ? 1.0 : 0.0)) << endl;
-//        } else {
-//            cout << ret->at(i) << "\t";
-//        }
-//    }
-//
-//    temp = new vector<double>({-6, -1});
-//    shared_ptr<vector<double>> ret1(fullyConnected->prediction(*temp));
-//    cout << "prediction \t";
-//    for (unsigned i = 0; i < ret1->size(); i++) {
-//        if (i == ret1->size() - 1) {
-//            cout << ret1->at(i) << "\t"
-//                 << (temp->at(0) >= 0 ? (temp->at(1) >= 0 ? 1.0 : 0.0) : (temp->at(1) < 0 ? 1.0 : 0.0)) << endl;
-//        } else {
-//            cout << ret1->at(i) << "\t";
-//        }
-//    }
-//    delete temp;
-//    return 0;
-//}
+    auto tarinData=makeTrainData(100,inp_hid_oup[0],-2,2);
+    auto tarinAnswer=makeAnswer(tarinData,inp_hid_oup[totalFloors-1]);
+
+    FullyConnectedNeuralNetwork connect(inp_hid_oup,totalFloors,-2.0,2.0);
+    connect.train(tarinData, tarinAnswer, 1, 10000, 0.1);
+    cout<<"enter:\n"<<tarinData.at(0)<<"\nexport\n"<<connect.prediction(tarinData.at(0))<<endl;
+    cout<<"standardOutput:\n"<<tarinAnswer.at(0)<<endl;
+    return 0;
+}
+
+
 //int main() {
 //    std::ofstream myfile("D:\\1.txt",std::ios::out|std::ios::trunc);
 //    myfile<<"白纸人生"<<std::endl<<"网址："<<"www.cppblog.com/andxie99"<<std::endl;

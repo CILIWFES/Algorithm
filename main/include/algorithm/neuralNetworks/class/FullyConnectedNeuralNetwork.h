@@ -3,8 +3,7 @@
 #include "../base.h"
 
 //static enum NeuronType{inputLayer=0,hiddenLayer,outputLayer};
-//全连接打印次数
-unsigned int NUMBEROFPRINTS = 10;
+
 class FullyConnectedNeuralNetwork {
 public:
     /**
@@ -18,8 +17,8 @@ public:
      * @param mean 平均数
      * @param standardDeviation 标志差
      */
-    FullyConnectedNeuralNetwork(unsigned int inp_hid_out[], unsigned int totalFloors, double mean,
-                                double standardDeviation);
+    FullyConnectedNeuralNetwork(unsigned int inp_hid_out[], unsigned int totalFloors, double startNum,
+                                double endNum);
 
     /**
     * 开始预测
