@@ -1,5 +1,5 @@
 
-#include <algorithm/neuralNetworks/class/FullyConnectedNeuralNetwork.h>
+#include <algorithm/neuralNetworks/FullyConnectedNeuralNetwork.h>
 
 //全连接打印次数
 unsigned int NUMBEROFPRINTS = 10;
@@ -50,17 +50,18 @@ vector<VectorXd> FullyConnectedNeuralNetwork::feedforwardCalculation(VectorXd &t
     for (unsigned int i = 0; i < this->layerNeuronWeights.size(); ++i) {
         auto &item = this->layerNeuronWeights.at(i);
         lastOutput = (item * lastOutput).transpose();
-        if(i!=0)this->conversion(lastOutput);
+        if (i != 0)this->conversion(lastOutput);
         recording.emplace_back(lastOutput);
     }
     return recording;
 }
+
 VectorXd FullyConnectedNeuralNetwork::prediction(VectorXd &input) {
     VectorXd lastOutput = input;
     for (unsigned int i = 0; i < this->layerNeuronWeights.size(); ++i) {
         auto &item = this->layerNeuronWeights.at(i);
         lastOutput = (item * lastOutput).transpose();
-        if(i!=0)this->conversion(lastOutput);
+        if (i != 0)this->conversion(lastOutput);
     }
     return lastOutput;
 }
@@ -156,7 +157,7 @@ void FullyConnectedNeuralNetwork::reverseTraining(vector<VectorXd> &layerNeuronO
         //计算权重修改值 △w=η*eh*x
         MatrixXd changeVal = rate * (derivative * (lastIntput.transpose()));
         //---计算上一层修正系数 befor_eh(beforlayer_no_* c(f(x)))=∑w(layer)*eh(layer)
-        derivative = (weight.transpose() * derivative).transpose();
+        if (i != 1) derivative = (weight.transpose() * derivative).transpose();
         //修改当前权重
         weight += changeVal;
 

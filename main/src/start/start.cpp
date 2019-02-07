@@ -1,4 +1,4 @@
-#include <algorithm/neuralNetworks/class/FullyConnectedNeuralNetwork.h>
+#include <algorithm/neuralNetworks/FullyConnectedNeuralNetwork.h>
 using namespace std;
 
 vector<VectorXd> makeTrainData(unsigned int num,unsigned int inSize,double startNum,double endNum){
@@ -16,10 +16,10 @@ vector<VectorXd> makeAnswer(vector<VectorXd>& trainData, unsigned int outSize){
         auto &item = trainData.at(i);
         ret.emplace_back(VectorXd(outSize));
         //单层感知器
-        ret.at(i) << (1 / (1 + pow(E, -(item(0)+item(1))))) ;
+        //ret.at(i) << (1 / (1 + pow(E, -(item(0)+item(1))))) ;
         /**分类器**/
         //在线上+,在线下- (一维)
-        //ret.at(i) << ((item(0)+item(1))>0 ? 1.0 : 0.0);
+        ret.at(i) << ((item(0)+item(1))>0 ? 1.0 : 0.0);
 
         //交叉线(二维) y=-x y=x 左右- 上下+
         //ret.at(i) << ( (item(0)+item(1)<0 && item(1)-item(0)>0)||(item(0)+item(1)>0 && item(1)-item(0)<0) ? 1.0 : 0.0);
@@ -32,14 +32,14 @@ vector<VectorXd> makeAnswer(vector<VectorXd>& trainData, unsigned int outSize){
 }
 
 int main() {
-    unsigned int inp_hid_oup[]={2,1};
-    unsigned int totalFloors = 2;
+    unsigned int inp_hid_oup[]={2,2,1};
+    unsigned int totalFloors = 3;
 
-    auto tarinData=makeTrainData(100,inp_hid_oup[0],-2,2);
+    auto tarinData=makeTrainData(100,inp_hid_oup[0],-6,6);
     auto tarinAnswer=makeAnswer(tarinData,inp_hid_oup[totalFloors-1]);
 
     FullyConnectedNeuralNetwork connect(inp_hid_oup,totalFloors,-2.0,2.0);
-    connect.train(tarinData, tarinAnswer, 1, 10000, 0.1);
+    connect.train(tarinData, tarinAnswer, 2, 10000, 0.1);
     cout<<"enter:\n"<<tarinData.at(0)<<"\nexport\n"<<connect.prediction(tarinData.at(0))<<endl;
     cout<<"standardOutput:\n"<<tarinAnswer.at(0)<<endl;
     return 0;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../base.h"
+#include "base.h"
 
 //static enum NeuronType{inputLayer=0,hiddenLayer,outputLayer};
 
