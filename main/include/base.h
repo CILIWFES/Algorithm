@@ -4,21 +4,24 @@
 
 #include <iostream>
 #include<random>
+#include<string>
 #include<Eigen/Eigen>
 #include<ctime>
 #include <vector>
 #include <memory>
-//#include<cmath>
-//#include<cfloat>
+#include<cmath>
+#include<cfloat>
 #include "module/class/TimePoint.h"
 using std::cout,
 std::endl,
+std::string,
 std::vector,
 std::shared_ptr,
 Eigen::MatrixXd,
 Eigen::ArrayXd,
 Eigen::RowVectorXd,
 Eigen::VectorXd;
+
 /**
  * 高斯分布
  * @param mean 平均数
@@ -35,3 +38,9 @@ double random_normal_distribution(double mean,double standardDeviation);
  */
 double random_evenly_distributed(double startNum,double endNum);
 
+
+template<class T>
+unsigned int length(T& data)
+{
+    return sizeof(data)/sizeof(data[0]);
+}

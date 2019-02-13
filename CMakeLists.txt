@@ -10,4 +10,5 @@ add_executable(Algorithm
         main/src/module/performance/time/TimePoint.cpp
         main/src/algorithm/neuralNetworks/fullyConnected/FullyConnectedNeuralNetwork.cpp
         main/src/base/base.cpp
+        main/include/base.h
         )

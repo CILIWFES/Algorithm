@@ -5,13 +5,13 @@
 unsigned int NUMBEROFPRINTS = 10;
 
 auto FullyConnectedNeuralNetwork::random_engine(double mean, double standardDeviation) {
-    auto closure = [mean, standardDeviation](double dump) {
+    static auto closure = [mean, standardDeviation](double dump) {
         return random_evenly_distributed(mean, standardDeviation);
     };
     return closure;
 }
 
-FullyConnectedNeuralNetwork::FullyConnectedNeuralNetwork(unsigned int inp_hid_out[], unsigned int totalFloors,
+FullyConnectedNeuralNetwork::FullyConnectedNeuralNetwork(unsigned int* inp_hid_out, unsigned int totalFloors,
                                                          double startNum, double endNum) {
     if (totalFloors <= 1) {
         throw "请输入尺寸大于1";
@@ -73,12 +73,11 @@ VectorXd FullyConnectedNeuralNetwork::train(vector<VectorXd> &trainData, vector<
     }
 
     /**前期准备**/
-    unsigned int trainSize = trainData.size();
+    long long trainSize = trainData.size();
     unsigned int nowTimes = 0;
-    unsigned int outLayers = this->layerNeuronWeights.back().rows();
+    long long  outLayers = this->layerNeuronWeights.back().rows();
     //使用输出层神经元个数来初始化向量
     VectorXd errRate = VectorXd(outLayers);
-
 
     /**批量训练准备**/
     //批量训练参数,平均输出
@@ -87,11 +86,11 @@ VectorXd FullyConnectedNeuralNetwork::train(vector<VectorXd> &trainData, vector<
     VectorXd avg_errD(0);
     //批量训练初始化
     if (train_model == 2) {
-        unsigned int layerSize = this->layerNeuronWeights.size();
+        unsigned long long layerSize = this->layerNeuronWeights.size();
         avgOut.reserve(layerSize);
         for (unsigned int i = 0; i < layerSize; i++) {
             //输出尺寸=下一神经元个数,输出层便为自身神经元尺寸
-            auto &item = i < layerSize - 1 ? this->layerNeuronWeights.at(i + 1) : this->layerNeuronWeights.at(i);
+            auto &item = this->layerNeuronWeights.at(i);
             avgOut.emplace_back(VectorXd(item.rows()));
         }
         avg_errD = VectorXd(outLayers);
@@ -125,6 +124,7 @@ VectorXd FullyConnectedNeuralNetwork::train(vector<VectorXd> &trainData, vector<
             } else if (train_model == 2) {
                 //计算批量训练参数
                 avg_errD += errD / trainSize;
+
                 for (unsigned int layOut = 0; layOut < out.size(); layOut++) {
                     avgOut.at(layOut) += out.at(layOut) / trainSize;
                 }
@@ -146,7 +146,7 @@ void FullyConnectedNeuralNetwork::reverseTraining(vector<VectorXd> &layerNeuronO
                                                   double rate) {
     VectorXd derivative = errorDerivative;
     //无需训练输入层
-    for (unsigned int i = layerNeuronOutputs.size() - 1; i >= 1; i--) {
+    for (unsigned  long long i = layerNeuronOutputs.size() - 1; i >= 1; i--) {
         MatrixXd &weight = this->layerNeuronWeights.at(i);
         VectorXd &lastOutput = layerNeuronOutputs.at(i);
         //---计算输出层修正值
@@ -171,3 +171,12 @@ VectorXd FullyConnectedNeuralNetwork::calculationError(VectorXd output, VectorXd
 VectorXd FullyConnectedNeuralNetwork::calculatedErrorDerivative(VectorXd output, VectorXd answer) {
     return answer - output;
 }
+
+
+string FullyConnectedNeuralNetwork::getSerialization() {
+    return string();
+}
+//
+//FullyConnectedNeuralNetwork* FullyConnectedNeuralNetwork::Serialization(string serialization) {
+//    return FullyConnectedNeuralNetwork(nullptr, 0, 0, 0);
+//}

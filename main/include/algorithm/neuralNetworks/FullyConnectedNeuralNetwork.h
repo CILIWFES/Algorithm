@@ -7,17 +7,13 @@
 class FullyConnectedNeuralNetwork {
 public:
     /**
-     * 神经元类型
-     */
-
-    /**
      * 生成神经网络
      * @param inp_hid_out 输出层个数-隐藏层1个数-2个数-3个数-...n个数-输出层个数
      * @param totalFloors 总层数
      * @param mean 平均数
      * @param standardDeviation 标志差
      */
-    FullyConnectedNeuralNetwork(unsigned int inp_hid_out[], unsigned int totalFloors, double startNum,
+    FullyConnectedNeuralNetwork(unsigned int* inp_hid_out, unsigned int totalFloors, double startNum,
                                 double endNum);
 
     /**
@@ -38,6 +34,17 @@ public:
      */
     VectorXd train(vector<VectorXd>& trainData,vector<VectorXd>& answer,int train_model, unsigned int times,double rate);
 
+    /**
+     * 序列化
+     * @return
+     */
+    string getSerialization();
+
+    /**
+     * 解析序列化
+     * @param twoDimensionalArray
+     */
+    static FullyConnectedNeuralNetwork*Serialization(string serialization);
 
 protected:
     vector<MatrixXd> layerNeuronWeights;
@@ -97,6 +104,5 @@ protected:
     VectorXd calculatedErrorDerivative(VectorXd output,VectorXd answer);
 
 private:
-
 
 };

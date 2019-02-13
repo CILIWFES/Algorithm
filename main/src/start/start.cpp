@@ -33,13 +33,13 @@ vector<VectorXd> makeAnswer(vector<VectorXd>& trainData, unsigned int outSize){
 
 int main() {
     unsigned int inp_hid_oup[]={2,2,1};
-    unsigned int totalFloors = 3;
+    unsigned int totalFloors = length(inp_hid_oup);
 
     auto tarinData=makeTrainData(100,inp_hid_oup[0],-6,6);
     auto tarinAnswer=makeAnswer(tarinData,inp_hid_oup[totalFloors-1]);
 
     FullyConnectedNeuralNetwork connect(inp_hid_oup,totalFloors,-2.0,2.0);
-    connect.train(tarinData, tarinAnswer, 2, 10000, 0.1);
+    connect.train(tarinData, tarinAnswer,1, 10000, 0.1);
     cout<<"enter:\n"<<tarinData.at(0)<<"\nexport\n"<<connect.prediction(tarinData.at(0))<<endl;
     cout<<"standardOutput:\n"<<tarinAnswer.at(0)<<endl;
     return 0;

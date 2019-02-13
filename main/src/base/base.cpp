@@ -11,8 +11,7 @@ double random_normal_distribution(double mean,double standardDeviation){
 
 double random_evenly_distributed(double startNum,double endNum){
     static std::default_random_engine randomEngine(static_cast<unsigned int>(time(nullptr)));
-//    static std::uniform_real_distribution<double> distribution(startNum, std::nextafter(endNum,DBL_MAX)); cmath cfloat
-    static std::uniform_real_distribution<double> distribution(startNum, endNum);
+    static std::uniform_real_distribution<double> distribution(startNum, std::nextafter(endNum,DBL_MAX));
+//    static std::uniform_real_distribution<double> distribution(startNum, endNum);
     return distribution(randomEngine);
-
 }
