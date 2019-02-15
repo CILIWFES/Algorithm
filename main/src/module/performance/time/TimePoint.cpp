@@ -1,4 +1,4 @@
-﻿#include "module/class/TimePoint.h"
+﻿#include "module/performance/time/TimePoint.h"
 #include <ctime>
 #include<iostream>
 TimePoint::TimePoint()

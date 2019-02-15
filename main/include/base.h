@@ -11,7 +11,7 @@
 #include <memory>
 #include<cmath>
 #include<cfloat>
-#include "module/class/TimePoint.h"
+#include "module/performance/time/TimePoint.h"
 using std::cout,
 std::endl,
 std::string,

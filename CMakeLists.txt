@@ -8,7 +8,8 @@ INCLUDE_DIRECTORIES(main/include)
 add_executable(Algorithm
         main/src/start/start.cpp
         main/src/module/performance/time/TimePoint.cpp
-        main/src/algorithm/neuralNetworks/fullyConnected/FullyConnectedNeuralNetwork.cpp
+        main/src/algorithm/neuralnetworks/fullyconnected/FullyConnectedNeuralNetwork.cpp
         main/src/base/base.cpp
         main/include/base.h
-        )
+        main/src/module/configuration/Configuration.cpp
+        main/src/module/IO/IOSupport.cpp )

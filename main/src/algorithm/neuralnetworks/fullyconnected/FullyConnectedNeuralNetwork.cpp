@@ -145,6 +145,7 @@ VectorXd FullyConnectedNeuralNetwork::train(vector<VectorXd> &trainData, vector<
 void FullyConnectedNeuralNetwork::reverseTraining(vector<VectorXd> &layerNeuronOutputs, VectorXd &errorDerivative,
                                                   double rate) {
     VectorXd derivative = errorDerivative;
+    
     //无需训练输入层
     for (unsigned  long long i = layerNeuronOutputs.size() - 1; i >= 1; i--) {
         MatrixXd &weight = this->layerNeuronWeights.at(i);
@@ -160,7 +161,6 @@ void FullyConnectedNeuralNetwork::reverseTraining(vector<VectorXd> &layerNeuronO
         if (i != 1) derivative = (weight.transpose() * derivative).transpose();
         //修改当前权重
         weight += changeVal;
-
     }
 }
 
